@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -9,13 +10,13 @@ import {
   BarChart3,
   BookOpen,
   Settings,
-  Zap,
   Search,
   ChevronDown,
   Wifi,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { agents } from "@/data/mock";
+import afcacLogo from "@/images/afcac_logo.png";
 
 const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Command Center" },
@@ -41,9 +42,8 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#017764] to-[#b0aa34] flex items-center justify-center shadow-lg">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
+          <Image src={afcacLogo} alt="AFCAC" className="w-8 h-8 object-contain shrink-0" priority />
+
           <div>
             <span className="text-gray-900 font-bold text-base tracking-tight">AFCAC</span>
             <span className="text-[#017764] font-bold text-base tracking-tight"> Helpdesk Portal</span>
