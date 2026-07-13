@@ -1,7 +1,8 @@
 "use client";
 
-import { Bell, Plus, Cpu } from "lucide-react";
+import { Bell, Cpu } from "lucide-react";
 import { useTranslations } from "next-intl";
+import NewTicketModal from "@/components/tickets/NewTicketModal";
 
 interface TopBarProps {
   title: string;
@@ -11,7 +12,6 @@ interface TopBarProps {
 
 export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   const tc = useTranslations("common");
-  const tt = useTranslations("topbar");
   return (
     <header className="h-14 border-b border-gray-200 bg-white/90 backdrop-blur-sm flex items-center justify-between px-6 sticky top-0 z-30">
       <div>
@@ -36,10 +36,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
         </button>
 
         {/* New ticket */}
-        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#017764] hover:bg-[#015a4d] text-white text-xs font-semibold rounded-lg transition-colors shadow-lg shadow-[#017764]/20">
-          <Plus className="w-3.5 h-3.5" />
-          {tt("newTicket")}
-        </button>
+        <NewTicketModal />
       </div>
     </header>
   );

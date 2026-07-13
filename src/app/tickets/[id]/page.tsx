@@ -3,8 +3,8 @@
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { tickets } from "@/data/mock";
 import { cn, formatSLA, formatRelativeTime } from "@/lib/utils";
+import { useTickets } from "@/context/TicketsContext";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -70,6 +70,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
   const tCommon = useTranslations("common");
   const tTime = useTranslations("time");
   const locale = useLocale() as Locale;
+  const { tickets } = useTickets();
   const ticket = tickets.find(tk => tk.id === id);
   const [message, setMessage] = useState("");
   const [draftEditing, setDraftEditing] = useState(false);

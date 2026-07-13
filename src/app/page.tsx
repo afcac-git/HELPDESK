@@ -33,10 +33,10 @@ import {
   sentimentTrend,
   volumeForecast,
   teamPerformance,
-  tickets,
 } from "@/data/mock";
 import { cn, formatSLA } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
+import { useTickets } from "@/context/TicketsContext";
 
 const priorityColor: Record<string, string> = {
   P1: "bg-red-500/15 text-red-600 border-red-400/30",
@@ -116,6 +116,7 @@ export default function Dashboard() {
   const tCommon = useTranslations("common");
   const tTime = useTranslations("time");
   const locale = useLocale() as Locale;
+  const { tickets } = useTickets();
 
   const volumeForecastLocalized = volumeForecast.map(d => ({ ...d, dayLabel: tCommon(`days.${d.day}`) }));
 

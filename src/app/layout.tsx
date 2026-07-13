@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import Sidebar from "@/components/layout/Sidebar";
+import { TicketsProvider } from "@/context/TicketsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,14 @@ export default async function RootLayout({
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="antialiased bg-slate-950 text-slate-100 h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex h-full">
-            <Sidebar />
-            <main className="flex-1 ml-64 overflow-auto min-h-screen">
-              {children}
-            </main>
-          </div>
+          <TicketsProvider>
+            <div className="flex h-full">
+              <Sidebar />
+              <main className="flex-1 ml-64 overflow-auto min-h-screen">
+                {children}
+              </main>
+            </div>
+          </TicketsProvider>
         </NextIntlClientProvider>
       </body>
     </html>

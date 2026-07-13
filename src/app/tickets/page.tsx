@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import TopBar from "@/components/layout/TopBar";
-import { tickets } from "@/data/mock";
 import { cn, formatSLA, formatRelativeTime } from "@/lib/utils";
+import { useTickets } from "@/context/TicketsContext";
 import {
   Search,
   SortDesc,
@@ -69,6 +69,7 @@ export default function TicketsPage() {
   const tCommon = useTranslations("common");
   const tTime = useTranslations("time");
   const locale = useLocale() as Locale;
+  const { tickets } = useTickets();
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [filterPriority, setFilterPriority] = useState<"all" | Priority>("all");

@@ -40,7 +40,29 @@
       "fri": "Ven",
       "sat": "Sam",
       "sun": "Dim"
+    },
+    "channel": {
+      "email": "Email",
+      "slack": "Slack",
+      "whatsapp": "WhatsApp",
+      "teams": "Teams",
+      "web": "Web",
+      "phone": "Téléphone"
     }
+  },
+  "newTicket": {
+    "trigger": "Nouveau ticket",
+    "title": "Créer un ticket",
+    "subtitle": "Décrivez votre demande de support, notre équipe (ou l'IA) vous répondra rapidement.",
+    "subject": "Sujet",
+    "description": "Description",
+    "priority": "Priorité",
+    "category": "Catégorie",
+    "channel": "Canal",
+    "yourName": "Votre nom",
+    "yourEmail": "Votre email",
+    "cancel": "Annuler",
+    "submit": "Envoyer la demande"
   },
   "sidebar": {
     "nav": {
@@ -57,9 +79,6 @@
     "ticketsCount": "{count} tickets",
     "currentUser": "Admin User",
     "currentUserRole": "Super Admin"
-  },
-  "topbar": {
-    "newTicket": "Nouveau ticket"
   },
   "dashboard": {
     "title": "Command Center",
