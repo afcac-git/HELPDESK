@@ -2,6 +2,14 @@ export type Priority = "P1" | "P2" | "P3" | "P4";
 export type Status = "open" | "pending" | "resolved" | "closed";
 export type Channel = "email" | "slack" | "teams" | "whatsapp" | "web" | "phone";
 export type Sentiment = "positive" | "neutral" | "frustrated" | "urgent";
+export type CategorySlug = "network" | "auth" | "api" | "security" | "admin" | "app";
+export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+
+export interface LocalizedText {
+  fr: string;
+  en: string;
+  pt: string;
+}
 
 export interface Agent {
   id: string;
@@ -27,7 +35,7 @@ export interface Contact {
 export interface Message {
   id: string;
   sender: "contact" | "agent" | "ai";
-  content: string;
+  content: LocalizedText;
   timestamp: Date;
   channel: Channel;
   sentiment?: Sentiment;
@@ -35,7 +43,7 @@ export interface Message {
 
 export interface Ticket {
   id: string;
-  title: string;
+  title: LocalizedText;
   priority: Priority;
   status: Status;
   channel: Channel;
@@ -44,14 +52,14 @@ export interface Ticket {
   createdAt: Date;
   updatedAt: Date;
   slaMinutesLeft: number;
-  tags: string[];
+  tags: LocalizedText[];
   sentiment: Sentiment;
   sentimentScore: number;
   messages: Message[];
   aiConfidence: number;
-  aiDraft?: string;
+  aiDraft?: LocalizedText;
   relatedTickets: string[];
-  category: string;
+  category: LocalizedText;
 }
 
 export const agents: Agent[] = [
@@ -73,7 +81,11 @@ export const contacts: Contact[] = [
 export const tickets: Ticket[] = [
   {
     id: "TK-4521",
-    title: "Impossible de se connecter au VPN depuis ce matin",
+    title: {
+      fr: "Impossible de se connecter au VPN depuis ce matin",
+      en: "Unable to connect to VPN since this morning",
+      pt: "Impossível conectar à VPN desde esta manhã",
+    },
     priority: "P1",
     status: "open",
     channel: "whatsapp",
@@ -82,22 +94,55 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 7200000),
     updatedAt: new Date(Date.now() - 900000),
     slaMinutesLeft: 47,
-    tags: ["VPN", "Réseau", "Urgent"],
+    tags: [
+      { fr: "VPN", en: "VPN", pt: "VPN" },
+      { fr: "Réseau", en: "Network", pt: "Rede" },
+      { fr: "Urgent", en: "Urgent", pt: "Urgente" },
+    ],
     sentiment: "frustrated",
     sentimentScore: 0.82,
     aiConfidence: 0.91,
-    aiDraft: "Bonjour Jane,\n\nJe comprends parfaitement l'urgence de cette situation et m'en excuse sincèrement.\n\nVoici les étapes pour résoudre le problème VPN :\n\n1. Vérifiez que le client Cisco AnyConnect est bien à jour (v4.10+)\n2. Effacez le cache : Préférences → Nettoyer les profils\n3. Reconnectez-vous sur le serveur vpn.acmecorp.com\n\nSi le problème persiste, je prends la main à distance immédiatement.\n\nCordialement,\nSophie - Équipe Réseau",
+    aiDraft: {
+      fr: "Bonjour Jane,\n\nJe comprends parfaitement l'urgence de cette situation et m'en excuse sincèrement.\n\nVoici les étapes pour résoudre le problème VPN :\n\n1. Vérifiez que le client Cisco AnyConnect est bien à jour (v4.10+)\n2. Effacez le cache : Préférences → Nettoyer les profils\n3. Reconnectez-vous sur le serveur vpn.acmecorp.com\n\nSi le problème persiste, je prends la main à distance immédiatement.\n\nCordialement,\nSophie - Équipe Réseau",
+      en: "Hello Jane,\n\nI completely understand the urgency of this situation and sincerely apologize.\n\nHere are the steps to resolve the VPN issue:\n\n1. Check that the Cisco AnyConnect client is up to date (v4.10+)\n2. Clear the cache: Preferences → Clean profiles\n3. Reconnect to the vpn.acmecorp.com server\n\nIf the problem persists, I'll take over remotely right away.\n\nBest regards,\nSophie - Network Team",
+      pt: "Olá Jane,\n\nEntendo perfeitamente a urgência desta situação e peço sinceras desculpas.\n\nAqui estão os passos para resolver o problema de VPN:\n\n1. Verifique se o cliente Cisco AnyConnect está atualizado (v4.10+)\n2. Limpe o cache: Preferências → Limpar perfis\n3. Reconecte-se ao servidor vpn.acmecorp.com\n\nSe o problema persistir, assumirei o controle remoto imediatamente.\n\nAtenciosamente,\nSophie - Equipe de Rede",
+    },
     relatedTickets: ["TK-4103", "TK-3891"],
-    category: "Réseau / VPN",
+    category: { fr: "Réseau / VPN", en: "Network / VPN", pt: "Rede / VPN" },
     messages: [
-      { id: "m1", sender: "contact", content: "Mon accès VPN ne fonctionne plus depuis ce matin", timestamp: new Date(Date.now() - 7200000), channel: "whatsapp", sentiment: "neutral" },
-      { id: "m2", sender: "agent", content: "Bonjour Jane, je regarde ça immédiatement.", timestamp: new Date(Date.now() - 6900000), channel: "whatsapp" },
-      { id: "m3", sender: "contact", content: "Ça fait 2h que j'attends ! J'ai une présentation dans 30 minutes !", timestamp: new Date(Date.now() - 900000), channel: "whatsapp", sentiment: "frustrated" },
+      {
+        id: "m1", sender: "contact", timestamp: new Date(Date.now() - 7200000), channel: "whatsapp", sentiment: "neutral",
+        content: {
+          fr: "Mon accès VPN ne fonctionne plus depuis ce matin",
+          en: "My VPN access hasn't worked since this morning",
+          pt: "Meu acesso VPN parou de funcionar desde esta manhã",
+        },
+      },
+      {
+        id: "m2", sender: "agent", timestamp: new Date(Date.now() - 6900000), channel: "whatsapp",
+        content: {
+          fr: "Bonjour Jane, je regarde ça immédiatement.",
+          en: "Hello Jane, I'm looking into this right away.",
+          pt: "Olá Jane, vou verificar isso imediatamente.",
+        },
+      },
+      {
+        id: "m3", sender: "contact", timestamp: new Date(Date.now() - 900000), channel: "whatsapp", sentiment: "frustrated",
+        content: {
+          fr: "Ça fait 2h que j'attends ! J'ai une présentation dans 30 minutes !",
+          en: "I've been waiting for 2 hours! I have a presentation in 30 minutes!",
+          pt: "Já faz 2h que estou esperando! Tenho uma apresentação em 30 minutos!",
+        },
+      },
     ],
   },
   {
     id: "TK-4520",
-    title: "Erreur 500 sur l'API de facturation",
+    title: {
+      fr: "Erreur 500 sur l'API de facturation",
+      en: "500 error on the billing API",
+      pt: "Erro 500 na API de faturamento",
+    },
     priority: "P1",
     status: "open",
     channel: "slack",
@@ -106,19 +151,34 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 3600000),
     updatedAt: new Date(Date.now() - 1800000),
     slaMinutesLeft: 22,
-    tags: ["API", "Facturation", "Production"],
+    tags: [
+      { fr: "API", en: "API", pt: "API" },
+      { fr: "Facturation", en: "Billing", pt: "Faturamento" },
+      { fr: "Production", en: "Production", pt: "Produção" },
+    ],
     sentiment: "urgent",
     sentimentScore: 0.91,
     aiConfidence: 0.76,
     relatedTickets: ["TK-4488"],
-    category: "API / Intégration",
+    category: { fr: "API / Intégration", en: "API / Integration", pt: "API / Integração" },
     messages: [
-      { id: "m4", sender: "contact", content: "Notre intégration de paiement retourne des 500 depuis 14h. Clients bloqués.", timestamp: new Date(Date.now() - 3600000), channel: "slack", sentiment: "urgent" },
+      {
+        id: "m4", sender: "contact", timestamp: new Date(Date.now() - 3600000), channel: "slack", sentiment: "urgent",
+        content: {
+          fr: "Notre intégration de paiement retourne des 500 depuis 14h. Clients bloqués.",
+          en: "Our payment integration has been returning 500s since 2pm. Customers are blocked.",
+          pt: "Nossa integração de pagamento está retornando erros 500 desde as 14h. Clientes bloqueados.",
+        },
+      },
     ],
   },
   {
     id: "TK-4519",
-    title: "Réinitialisation de mot de passe impossible",
+    title: {
+      fr: "Réinitialisation de mot de passe impossible",
+      en: "Unable to reset password",
+      pt: "Impossível redefinir a senha",
+    },
     priority: "P2",
     status: "pending",
     channel: "email",
@@ -127,20 +187,38 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 14400000),
     updatedAt: new Date(Date.now() - 3600000),
     slaMinutesLeft: 180,
-    tags: ["Auth", "MDP"],
+    tags: [
+      { fr: "Auth", en: "Auth", pt: "Auth" },
+      { fr: "MDP", en: "Password", pt: "Senha" },
+    ],
     sentiment: "neutral",
     sentimentScore: 0.45,
     aiConfidence: 0.95,
-    aiDraft: "Bonjour Alice,\n\nVoici la procédure pour réinitialiser votre mot de passe...",
+    aiDraft: {
+      fr: "Bonjour Alice,\n\nVoici la procédure pour réinitialiser votre mot de passe...",
+      en: "Hello Alice,\n\nHere is the procedure to reset your password...",
+      pt: "Olá Alice,\n\nAqui está o procedimento para redefinir sua senha...",
+    },
     relatedTickets: [],
-    category: "Authentification",
+    category: { fr: "Authentification", en: "Authentication", pt: "Autenticação" },
     messages: [
-      { id: "m5", sender: "contact", content: "Je ne reçois pas l'email de réinitialisation de mot de passe.", timestamp: new Date(Date.now() - 14400000), channel: "email", sentiment: "neutral" },
+      {
+        id: "m5", sender: "contact", timestamp: new Date(Date.now() - 14400000), channel: "email", sentiment: "neutral",
+        content: {
+          fr: "Je ne reçois pas l'email de réinitialisation de mot de passe.",
+          en: "I'm not receiving the password reset email.",
+          pt: "Não estou recebendo o email de redefinição de senha.",
+        },
+      },
     ],
   },
   {
     id: "TK-4518",
-    title: "Demande de provisionnement - 50 nouvelles licences",
+    title: {
+      fr: "Demande de provisionnement - 50 nouvelles licences",
+      en: "Provisioning request - 50 new licenses",
+      pt: "Solicitação de provisionamento - 50 novas licenças",
+    },
     priority: "P3",
     status: "open",
     channel: "email",
@@ -148,19 +226,33 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 86400000),
     updatedAt: new Date(Date.now() - 43200000),
     slaMinutesLeft: 420,
-    tags: ["Licences", "Provisionnement"],
+    tags: [
+      { fr: "Licences", en: "Licenses", pt: "Licenças" },
+      { fr: "Provisionnement", en: "Provisioning", pt: "Provisionamento" },
+    ],
     sentiment: "positive",
     sentimentScore: 0.2,
     aiConfidence: 0.88,
     relatedTickets: [],
-    category: "Administration",
+    category: { fr: "Administration", en: "Administration", pt: "Administração" },
     messages: [
-      { id: "m6", sender: "contact", content: "Nous avons besoin de 50 licences supplémentaires pour notre expansion.", timestamp: new Date(Date.now() - 86400000), channel: "email", sentiment: "positive" },
+      {
+        id: "m6", sender: "contact", timestamp: new Date(Date.now() - 86400000), channel: "email", sentiment: "positive",
+        content: {
+          fr: "Nous avons besoin de 50 licences supplémentaires pour notre expansion.",
+          en: "We need 50 additional licenses for our expansion.",
+          pt: "Precisamos de 50 licenças adicionais para nossa expansão.",
+        },
+      },
     ],
   },
   {
     id: "TK-4517",
-    title: "Dashboard analytics ne charge pas les données",
+    title: {
+      fr: "Dashboard analytics ne charge pas les données",
+      en: "Analytics dashboard is not loading data",
+      pt: "O dashboard de analytics não carrega os dados",
+    },
     priority: "P2",
     status: "open",
     channel: "web",
@@ -169,19 +261,33 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 10800000),
     updatedAt: new Date(Date.now() - 2400000),
     slaMinutesLeft: 95,
-    tags: ["Dashboard", "Performance"],
+    tags: [
+      { fr: "Dashboard", en: "Dashboard", pt: "Dashboard" },
+      { fr: "Performance", en: "Performance", pt: "Desempenho" },
+    ],
     sentiment: "neutral",
     sentimentScore: 0.5,
     aiConfidence: 0.82,
     relatedTickets: ["TK-4492"],
-    category: "Application Web",
+    category: { fr: "Application Web", en: "Web Application", pt: "Aplicação Web" },
     messages: [
-      { id: "m7", sender: "contact", content: "Le dashboard analytics affiche une roue de chargement infinie.", timestamp: new Date(Date.now() - 10800000), channel: "web", sentiment: "neutral" },
+      {
+        id: "m7", sender: "contact", timestamp: new Date(Date.now() - 10800000), channel: "web", sentiment: "neutral",
+        content: {
+          fr: "Le dashboard analytics affiche une roue de chargement infinie.",
+          en: "The analytics dashboard shows an infinite loading spinner.",
+          pt: "O dashboard de analytics exibe um carregamento infinito.",
+        },
+      },
     ],
   },
   {
     id: "TK-4516",
-    title: "Configuration SSO avec Azure AD",
+    title: {
+      fr: "Configuration SSO avec Azure AD",
+      en: "SSO configuration with Azure AD",
+      pt: "Configuração de SSO com Azure AD",
+    },
     priority: "P3",
     status: "resolved",
     channel: "teams",
@@ -190,12 +296,16 @@ export const tickets: Ticket[] = [
     createdAt: new Date(Date.now() - 172800000),
     updatedAt: new Date(Date.now() - 86400000),
     slaMinutesLeft: 9999,
-    tags: ["SSO", "Azure AD", "Sécurité"],
+    tags: [
+      { fr: "SSO", en: "SSO", pt: "SSO" },
+      { fr: "Azure AD", en: "Azure AD", pt: "Azure AD" },
+      { fr: "Sécurité", en: "Security", pt: "Segurança" },
+    ],
     sentiment: "positive",
     sentimentScore: 0.15,
     aiConfidence: 0.97,
     relatedTickets: [],
-    category: "Sécurité / IAM",
+    category: { fr: "Sécurité / IAM", en: "Security / IAM", pt: "Segurança / IAM" },
     messages: [],
   },
 ];
@@ -225,29 +335,29 @@ export const sentimentTrend = [
   { time: "15h", positive: 62, neutral: 25, negative: 13 },
 ];
 
-export const volumeForecast = [
-  { day: "Lun", actual: 312, predicted: 320 },
-  { day: "Mar", actual: 287, predicted: 295 },
-  { day: "Mer", actual: 421, predicted: 410 },
-  { day: "Jeu", actual: 356, predicted: 340 },
-  { day: "Ven", actual: 498, predicted: 480 },
-  { day: "Sam", actual: 189, predicted: 200 },
-  { day: "Dim", actual: null, predicted: 847 },
+export const volumeForecast: { day: DayKey; actual: number | null; predicted: number }[] = [
+  { day: "mon", actual: 312, predicted: 320 },
+  { day: "tue", actual: 287, predicted: 295 },
+  { day: "wed", actual: 421, predicted: 410 },
+  { day: "thu", actual: 356, predicted: 340 },
+  { day: "fri", actual: 498, predicted: 480 },
+  { day: "sat", actual: 189, predicted: 200 },
+  { day: "sun", actual: null, predicted: 847 },
 ];
 
-export const teamPerformance = [
-  { team: "IT Support", resolved: 45, pending: 12, slaOk: 94 },
-  { team: "Réseau", resolved: 23, pending: 8, slaOk: 87 },
-  { team: "Sécurité", resolved: 18, pending: 3, slaOk: 98 },
-  { team: "DevOps", resolved: 12, pending: 5, slaOk: 91 },
-  { team: "RH", resolved: 8, pending: 2, slaOk: 100 },
+export const teamPerformance: { team: LocalizedText; resolved: number; pending: number; slaOk: number }[] = [
+  { team: { fr: "IT Support", en: "IT Support", pt: "Suporte de TI" }, resolved: 45, pending: 12, slaOk: 94 },
+  { team: { fr: "Réseau", en: "Network", pt: "Rede" }, resolved: 23, pending: 8, slaOk: 87 },
+  { team: { fr: "Sécurité", en: "Security", pt: "Segurança" }, resolved: 18, pending: 3, slaOk: 98 },
+  { team: { fr: "DevOps", en: "DevOps", pt: "DevOps" }, resolved: 12, pending: 5, slaOk: 91 },
+  { team: { fr: "RH", en: "HR", pt: "RH" }, resolved: 8, pending: 2, slaOk: 100 },
 ];
 
-export const knowledgeArticles = [
-  { id: "kb1", title: "Résolution des problèmes VPN Cisco AnyConnect", category: "Réseau", views: 1247, helpful: 94, lastUpdated: new Date(Date.now() - 86400000 * 3) },
-  { id: "kb2", title: "Guide de réinitialisation de mot de passe", category: "Authentification", views: 3891, helpful: 97, lastUpdated: new Date(Date.now() - 86400000 * 1) },
-  { id: "kb3", title: "Configuration SSO Azure AD / Okta", category: "Sécurité", views: 892, helpful: 89, lastUpdated: new Date(Date.now() - 86400000 * 7) },
-  { id: "kb4", title: "Provisionnement et gestion des licences", category: "Administration", views: 654, helpful: 91, lastUpdated: new Date(Date.now() - 86400000 * 2) },
-  { id: "kb5", title: "Intégration API REST — Guide développeur", category: "API", views: 2103, helpful: 88, lastUpdated: new Date(Date.now() - 86400000 * 5) },
-  { id: "kb6", title: "Diagnostic des performances dashboard", category: "Application", views: 445, helpful: 85, lastUpdated: new Date(Date.now() - 86400000 * 4) },
+export const knowledgeArticles: { id: string; title: LocalizedText; category: CategorySlug; views: number; helpful: number; lastUpdated: Date }[] = [
+  { id: "kb1", title: { fr: "Résolution des problèmes VPN Cisco AnyConnect", en: "Resolving VPN issues with Cisco AnyConnect", pt: "Resolução de problemas de VPN com Cisco AnyConnect" }, category: "network", views: 1247, helpful: 94, lastUpdated: new Date(Date.now() - 86400000 * 3) },
+  { id: "kb2", title: { fr: "Guide de réinitialisation de mot de passe", en: "Password reset guide", pt: "Guia de redefinição de senha" }, category: "auth", views: 3891, helpful: 97, lastUpdated: new Date(Date.now() - 86400000 * 1) },
+  { id: "kb3", title: { fr: "Configuration SSO Azure AD / Okta", en: "SSO configuration Azure AD / Okta", pt: "Configuração de SSO Azure AD / Okta" }, category: "security", views: 892, helpful: 89, lastUpdated: new Date(Date.now() - 86400000 * 7) },
+  { id: "kb4", title: { fr: "Provisionnement et gestion des licences", en: "License provisioning and management", pt: "Provisionamento e gestão de licenças" }, category: "admin", views: 654, helpful: 91, lastUpdated: new Date(Date.now() - 86400000 * 2) },
+  { id: "kb5", title: { fr: "Intégration API REST — Guide développeur", en: "REST API Integration — Developer Guide", pt: "Integração de API REST — Guia do desenvolvedor" }, category: "api", views: 2103, helpful: 88, lastUpdated: new Date(Date.now() - 86400000 * 5) },
+  { id: "kb6", title: { fr: "Diagnostic des performances dashboard", en: "Dashboard performance diagnostics", pt: "Diagnóstico de desempenho do dashboard" }, category: "app", views: 445, helpful: 85, lastUpdated: new Date(Date.now() - 86400000 * 4) },
 ];

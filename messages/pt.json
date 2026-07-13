@@ -1,0 +1,508 @@
+{
+  "common": {
+    "appName": "AFCAC Helpdesk Portal",
+    "aiActive": "IA Ativa",
+    "aiPrefix": "IA",
+    "priority": {
+      "all": "Todas as prioridades",
+      "P1": "P1 — Crítico",
+      "P2": "P2 — Alta",
+      "P3": "P3 — Normal",
+      "P4": "P4 — Baixa"
+    },
+    "status": {
+      "all": "Todos",
+      "open": "Aberto",
+      "pending": "Pendente",
+      "resolved": "Resolvido",
+      "closed": "Fechado"
+    },
+    "sentiment": {
+      "frustrated": "Frustração",
+      "urgent": "Urgente",
+      "neutral": "Neutro",
+      "positive": "Positivo"
+    },
+    "categories": {
+      "all": "Todos",
+      "network": "Rede",
+      "auth": "Autenticação",
+      "api": "API",
+      "security": "Segurança",
+      "admin": "Administração",
+      "app": "Aplicação"
+    },
+    "days": {
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb",
+      "sun": "Dom"
+    }
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "Command Center",
+      "tickets": "Tickets",
+      "workflows": "Workflows",
+      "analytics": "Analytics",
+      "knowledge": "Base de Conhecimento",
+      "settings": "Configurações"
+    },
+    "searchPlaceholder": "Pesquisar...",
+    "agents": "Agentes",
+    "onlineCount": "{count} online",
+    "ticketsCount": "{count} tickets",
+    "currentUser": "Admin User",
+    "currentUserRole": "Super Admin"
+  },
+  "topbar": {
+    "newTicket": "Novo ticket"
+  },
+  "dashboard": {
+    "title": "Command Center",
+    "subtitle": "Visão em tempo real · Atualizado há 12s",
+    "alertPrefix": "Alerta preditivo: ",
+    "alertText": "Volume previsto +23% nas próximas 4 horas. Equipe de Rede em risco de saturação às 14h30.",
+    "alertAction": "Ações sugeridas",
+    "kpi": {
+      "openTickets": "Tickets abertos",
+      "vsYesterday": "vs ontem",
+      "aiResolved": "Resolvidos por IA",
+      "autoToday": "auto hoje",
+      "responseTime": "Tempo de resposta",
+      "avgCsat": "CSAT médio",
+      "outOf5": "de 5.0",
+      "slaBreaches": "Violações de SLA",
+      "agentsOnline": "Agentes online"
+    },
+    "volumeChart": {
+      "title": "Volume de tickets — Previsão ML",
+      "subtitle": "Horizonte de 7 dias · Modelo Prophet",
+      "actual": "Real",
+      "predicted": "Previsto"
+    },
+    "aiActions": {
+      "title": "IA — Ações sugeridas",
+      "subtitle": "Baseadas na análise preditiva",
+      "action1Title": "Ativar resposta automática \"Redefinir Senha\"",
+      "action1Desc": "Economia estimada: ~120 tickets/semana",
+      "action1Button": "Aplicar",
+      "action2Title": "Reforço Equipe de Rede",
+      "action2Desc": "3 agentes disponíveis para mobilizar",
+      "action2Button": "Notificar",
+      "action3Title": "Ajustar SLA P2 — Segunda de manhã",
+      "action3Desc": "Pico histórico detectado 9h–11h",
+      "action3Button": "Configurar"
+    },
+    "sentimentChart": {
+      "title": "Sentimento do cliente — Tempo real",
+      "subtitle": "Análise de NLP por mensagem · Hoje",
+      "positive": "Positivo",
+      "neutral": "Neutro",
+      "negative": "Negativo"
+    },
+    "teamPerformance": {
+      "title": "Desempenho das equipes",
+      "subtitle": "Hoje",
+      "resolved": "resolvidos",
+      "pending": "pendentes"
+    },
+    "liveTickets": {
+      "title": "Tickets críticos — Em andamento",
+      "subtitle": "Ordenados por urgência de SLA · Atualizado em tempo real",
+      "viewAll": "Ver todos",
+      "slaRemaining": "SLA restante",
+      "confidence": "confiança"
+    }
+  },
+  "tickets": {
+    "title": "Tickets",
+    "subtitle": "{count, plural, one {# ticket} other {# tickets}} · Ordenado por urgência de SLA",
+    "searchPlaceholder": "Pesquisar por título, contato, ID...",
+    "sort": "Ordenar",
+    "unassigned": "Não atribuído",
+    "sla": "SLA",
+    "aiPrefix": "IA",
+    "noResults": "Nenhum ticket corresponde à sua pesquisa"
+  },
+  "ticketDetail": {
+    "notFound": "Ticket não encontrado",
+    "backToTickets": "← Voltar aos tickets",
+    "resolve": "Resolver",
+    "escalate": "Escalar",
+    "contact": "Contato",
+    "tier": "Tier",
+    "healthScore": "Health Score",
+    "csat": "CSAT",
+    "totalTickets": "Total de tickets",
+    "assets": "Ativos",
+    "assetVpnExpiry": "Expira em 2d",
+    "assetLaptopOk": "OK",
+    "relatedTickets": "Tickets relacionados",
+    "details": "Detalhes",
+    "category": "Categoria",
+    "created": "Criado",
+    "updated": "Atualizado",
+    "assignedTo": "Atribuído a",
+    "tags": "Tags",
+    "replyPlaceholder": "Responder a {name}...",
+    "template": "Modelo",
+    "send": "Enviar",
+    "tabAi": "IA",
+    "tabKb": "Fontes",
+    "tabCollab": "Colab",
+    "aiConfidence": "Confiança da IA",
+    "aiRecommendAuto": "Resolução autônoma recomendada",
+    "aiRecommendReview": "Revisão humana sugerida",
+    "aiRecommendExpert": "Especialista humano necessário",
+    "aiDraft": "Rascunho da IA",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "use": "Usar",
+    "helpful": "Útil",
+    "regenerate": "Regenerar",
+    "noDraft": "Nenhum rascunho de IA disponível",
+    "generateSuggestion": "Gerar uma sugestão",
+    "ragSources": "Fontes RAG",
+    "relevantArticles": "{count} artigos relevantes",
+    "view": "Ver",
+    "insert": "Inserir",
+    "involveExpert": "Envolver um especialista",
+    "internalNote": "Nota interna",
+    "internalNotePlaceholder": "Nota visível apenas para a equipe...",
+    "addNote": "Adicionar nota",
+    "ragTag": "IA · RAG",
+    "kbArticles": {
+      "article1Title": "Resolução de VPN Cisco AnyConnect",
+      "article2Title": "Problemas de autenticação VPN",
+      "article3Title": "Configuração de SSO e certificados"
+    },
+    "experts": {
+      "theoTeam": "DevOps",
+      "emmaTeam": "Segurança"
+    }
+  },
+  "analytics": {
+    "title": "Analytics Preditivo",
+    "subtitle": "Machine Learning · Horizonte de 7 dias · Atualizado a cada 5 min",
+    "bottleneckTitle": "Gargalo previsto — Equipe de Rede",
+    "bottleneckDesc": "Saturação detectada às 14h30 (+78% volume vs capacidade). 3 agentes de reforço recomendados.",
+    "mobilize": "Mobilizar reforços",
+    "dismiss": "Ignorar",
+    "knowledgeGapTitle": "Knowledge Gap detectado",
+    "knowledgeGapDesc": "12 tickets semelhantes esta semana sem artigo de KB relevante (categoria: Erro SSL VPN). Criar o artigo?",
+    "createAiArticle": "Criar artigo com IA",
+    "later": "Mais tarde",
+    "kpi": {
+      "fcr": "FCR (First Contact)",
+      "aht": "AHT médio",
+      "aiAutoResolve": "Auto-resolução por IA",
+      "globalCsat": "CSAT global"
+    },
+    "hourlyLoad": {
+      "title": "Carga horária — Hoje",
+      "subtitle": "Identifique picos para otimizar a cobertura de agentes",
+      "series": "Tickets/h"
+    },
+    "channelDistribution": {
+      "title": "Distribuição de canais",
+      "subtitle": "Esta semana"
+    },
+    "agentPerformance": {
+      "title": "Desempenho dos agentes",
+      "subtitle": "Esta semana · Ordenado por CSAT",
+      "agent": "Agente",
+      "resolved": "Resolvidos",
+      "top": "★ Top"
+    },
+    "resolutionByCategory": {
+      "title": "Resolução por categoria",
+      "subtitle": "Taxa de auto-resolução por IA · Esta semana",
+      "tickets": "tickets",
+      "aiSuffix": "% IA"
+    },
+    "burnout": {
+      "title": "Risco de esgotamento — Equipe",
+      "subtitle": "Pontuação calculada a cada 4h · Sophie M.",
+      "globalScore": "Pontuação global",
+      "value": "68/100 — Moderado",
+      "subjects": {
+        "volume": "Volume",
+        "sentimentReceived": "Sentimento recebido",
+        "overtime": "Horas extras",
+        "fcr": "FCR",
+        "complexity": "Complexidade"
+      }
+    },
+    "volumeTrend": {
+      "title": "Volume de tickets — Tendência de 7 dias",
+      "subtitle": "Real vs Previsto · Modelo Prophet",
+      "actual": "Real",
+      "predicted": "Previsto"
+    },
+    "categories": {
+      "network": "Rede/VPN",
+      "auth": "Auth/Senha",
+      "api": "API",
+      "admin": "Administração",
+      "security": "Segurança"
+    }
+  },
+  "knowledge": {
+    "title": "Base de Conhecimento",
+    "subtitle": "{count} artigos · Alimentada por RAG",
+    "newArticle": "Novo artigo",
+    "aiSuggestedTitle": "IA — Artigos sugeridos para criar",
+    "aiSuggestedBadge": "Knowledge Gap detectado",
+    "generate": "Gerar",
+    "searchPlaceholder": "Pesquisar na base de conhecimento...",
+    "updatedAgo": "Atualizado {time}",
+    "usefulSuffix": "% útil",
+    "selectArticle": "Selecione um artigo",
+    "selectArticleHint": "Clique em um artigo para ver seu conteúdo e estatísticas",
+    "views": "Visualizações",
+    "useful": "Útil",
+    "indexed": "Indexado",
+    "ragIndexed": "RAG",
+    "symptoms": "Sintomas",
+    "resolutionSteps": "Etapas de resolução",
+    "ragTags": "Tags RAG",
+    "wasHelpful": "Este artigo foi útil para você?",
+    "yes": "Sim",
+    "improve": "Melhorar",
+    "suggested": {
+      "article1Title": "Erros SSL durante a conexão VPN",
+      "article1Reason": "12 tickets não resolvidos esta semana",
+      "article2Title": "Guia: Acesso após expiração da conta",
+      "article2Reason": "Pico de solicitações nas segundas-feiras de manhã"
+    },
+    "demoArticle": {
+      "symptom1": "Impossível conectar a partir do cliente VPN",
+      "symptom2": "Mensagem de erro \"Authentication failed\"",
+      "symptom3": "A conexão se estabelece e depois cai",
+      "step1": "Verificar a versão do cliente (v4.10+ necessária)",
+      "step2": "Limpar os perfis: Preferências → Limpar",
+      "step3": "Reconectar em vpn.company.com",
+      "step4": "Verificar se o certificado não expirou",
+      "step5": "Se persistir, reinstalar o cliente",
+      "tags": ["VPN", "Cisco AnyConnect", "Conexão", "Rede", "Auth"]
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Configuração da plataforma {appName}",
+    "sections": {
+      "ai": "Inteligência Artificial",
+      "notifications": "Notificações",
+      "security": "Segurança & Acesso",
+      "team": "Equipes & Agentes",
+      "integrations": "Integrações",
+      "appearance": "Aparência",
+      "sla": "SLA & Workflows"
+    },
+    "ai": {
+      "subtitle": "Configure o comportamento do motor de IA RAG do {appName}",
+      "modelTitle": "Modelo LLM",
+      "models": {
+        "sonnetName": "Claude Sonnet 4.6",
+        "sonnetDesc": "Recomendado · Equilíbrio entre desempenho/custo",
+        "sonnetBadge": "Ativo",
+        "haikuName": "Claude Haiku 4.5",
+        "haikuDesc": "Ultra-rápido para triagem",
+        "haikuBadge": "Triagem",
+        "opusName": "Claude Opus 4.7",
+        "opusDesc": "Máxima precisão · Custo elevado",
+        "opusBadge": "Premium"
+      },
+      "featuresTitle": "Funcionalidades de IA",
+      "features": {
+        "autoResolveLabel": "Resolução autônoma",
+        "autoResolveDesc": "A IA resolve automaticamente os tickets quando a confiança é suficiente",
+        "draftLabel": "Rascunhos de respostas",
+        "draftDesc": "Gera sugestões de respostas para cada ticket",
+        "sentimentLabel": "Análise de sentimento",
+        "sentimentDesc": "Analisa o sentimento do cliente em tempo real em cada mensagem",
+        "ragLabel": "RAG — Base de conhecimento",
+        "ragDesc": "Busca semântica na KB para enriquecer as respostas da IA",
+        "feedbackLabel": "Aprendizado contínuo",
+        "feedbackDesc": "Os tickets resolvidos alimentam automaticamente a base RAG"
+      },
+      "thresholdTitle": "Limiar de confiança — Resolução autônoma",
+      "thresholdDesc": "Abaixo deste limiar, um rascunho é apresentado ao agente em vez de uma resolução automática",
+      "thresholdLow": "50% — Permissivo",
+      "thresholdHigh": "100% — Muito rigoroso",
+      "save": "Salvar configurações de IA"
+    },
+    "notifications": {
+      "subtitle": "Gerencie quando e como você é alertado",
+      "realtimeTitle": "Alertas em tempo real",
+      "items": {
+        "slaAlertLabel": "Alerta de SLA em risco",
+        "slaAlertDesc": "Notificação 1h antes da expiração do SLA",
+        "sentimentAlertLabel": "Sentimento crítico",
+        "sentimentAlertDesc": "Alerta quando a pontuação de frustração ultrapassa 80%",
+        "newTicketLabel": "Novo ticket",
+        "newTicketDesc": "Notificação para cada novo ticket (não recomendado)",
+        "agentMentionLabel": "Menção @agente",
+        "agentMentionDesc": "Notificação quando você é mencionado em um ticket",
+        "dailyDigestLabel": "Resumo diário",
+        "dailyDigestDesc": "Resumo do dia por email às 18h",
+        "slackNotifsLabel": "Notificações do Slack",
+        "slackNotifsDesc": "Enviar alertas para o seu canal do Slack",
+        "emailNotifsLabel": "Notificações por email",
+        "emailNotifsDesc": "Receber alertas críticos por email"
+      }
+    },
+    "integrations": {
+      "subtitle": "Conecte o {appName} ao seu ecossistema de ferramentas",
+      "connected": "Conectado",
+      "disconnected": "Não conectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "items": {
+        "slackDesc": "Notificações & tickets do Slack",
+        "teamsDesc": "Integração bidirecional",
+        "whatsappDesc": "Via Meta Cloud API",
+        "jiraDesc": "Sincronização de tickets/issues",
+        "salesforceDesc": "CRM & dados de clientes",
+        "pagerdutyDesc": "Incidentes & alertas on-call",
+        "githubDesc": "Issues & PRs vinculados aos tickets",
+        "hubspotDesc": "CRM de marketing & vendas"
+      }
+    },
+    "security": {
+      "subtitle": "Configuração de SSO, RBAC e conformidade com o RGPD",
+      "ssoTitle": "Single Sign-On (SSO)",
+      "ssoActive": "Ativo",
+      "ssoInactive": "Inativo",
+      "gdprTitle": "Conformidade com o RGPD",
+      "retention": "Retenção de dados",
+      "retention2y": "2 anos",
+      "retention5y": "5 anos",
+      "retention7y": "7 anos",
+      "autoAnonymize": "Anonimização automática",
+      "dsarExport": "Exportação DSAR (72h)",
+      "configure": "Configurar"
+    }
+  },
+  "workflow": {
+    "title": "Workflows No-Code",
+    "subtitle": "Automação visual · Nenhuma habilidade de programação necessária",
+    "builderView": "Construtor",
+    "listView": "Lista",
+    "stats": {
+      "active": "Workflows ativos",
+      "executionsToday": "Execuções hoje",
+      "automatedTickets": "Tickets automatizados",
+      "successRate": "Taxa de sucesso"
+    },
+    "searchPlaceholder": "Pesquisar um workflow...",
+    "newWorkflow": "Novo workflow",
+    "executions": "execuções",
+    "lastRun": "Última: {value}",
+    "never": "Nunca",
+    "components": "Componentes",
+    "nodeTypes": {
+      "trigger": "GATILHO",
+      "condition": "CONDIÇÃO",
+      "action": "AÇÃO",
+      "delay": "ATRASO"
+    },
+    "status": {
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "paused": "Pausado"
+    },
+    "builder": {
+      "settings": "Configurações",
+      "activate": "Ativar",
+      "addNode": "Adicionar um nó",
+      "nodeProperties": "Propriedades do nó",
+      "name": "Nome",
+      "trigger": "Gatilho",
+      "condition": "Condição",
+      "save": "Salvar",
+      "triggerOptions": {
+        "ticketCreated": "Ticket criado",
+        "slaAtRisk": "SLA em risco",
+        "sentimentHigh": "Sentimento elevado",
+        "fieldChanged": "Campo alterado"
+      },
+      "conditionFieldOptions": {
+        "priorityIs": "Prioridade é",
+        "tierIs": "Tier do cliente é",
+        "slaRemaining": "SLA restante"
+      }
+    },
+    "paletteItems": {
+      "ticketCreated": "Ticket criado",
+      "slaAtRisk": "SLA em risco",
+      "sentimentHigh": "Sentimento elevado",
+      "ifElse": "Se/Senão",
+      "vipClient": "Cliente VIP?",
+      "sendEmail": "Enviar email",
+      "slackNotif": "Notif. Slack",
+      "assignAgent": "Atribuir agente",
+      "delay": "Atraso"
+    },
+    "workflows": {
+      "wf1": {
+        "name": "Escalonamento de SLA VIP",
+        "description": "Alerta automático e reatribuição quando um ticket VIP corre o risco de ultrapassar o SLA",
+        "category": "SLA",
+        "lastRun": "Há 12 min",
+        "nodes": {
+          "n1": "1h restante no SLA",
+          "n2": "Cliente é VIP?",
+          "n3": "Notificar Gerente (Slack)",
+          "n4": "Atribuir Agente Sênior"
+        }
+      },
+      "wf2": {
+        "name": "Resposta automática de Redefinição de Senha",
+        "description": "Resolução automática de pedidos de redefinição de senha via a base de conhecimento com IA",
+        "category": "IA",
+        "lastRun": "Há 3 min",
+        "nodes": {
+          "n1": "Ticket criado - Intenção: Redefinir Senha",
+          "n2": "Confiança da IA > 85%?",
+          "n3": "Enviar resposta automática",
+          "n4": "Fechar ticket automaticamente"
+        }
+      },
+      "wf3": {
+        "name": "Alerta de Sentimento Negativo",
+        "description": "Detecta conversas em risco e avisa o supervisor em tempo real",
+        "category": "Sentimento",
+        "lastRun": "Há 1h",
+        "nodes": {
+          "n1": "Sentimento de frustração > 80%",
+          "n2": "Notificar Supervisor",
+          "n3": "Aguardar 10 min",
+          "n4": "Ticket resolvido?"
+        }
+      },
+      "wf4": {
+        "name": "Acompanhamento de tickets inativos",
+        "description": "Acompanhamento automático de tickets sem resposta do cliente há 48h",
+        "category": "Acompanhamento",
+        "nodes": {
+          "n1": "Ticket sem resposta há 48h",
+          "n2": "Enviar email de acompanhamento",
+          "n3": "Aguardar 24h",
+          "n4": "Encerrar se não houver resposta"
+        }
+      }
+    }
+  },
+  "time": {
+    "justNow": "Agora mesmo",
+    "minutesAgo": "Há {count}m",
+    "hoursAgo": "Há {count}h",
+    "daysAgo": "Há {count}d",
+    "slaExpired": "EXPIRADO"
+  }
+}

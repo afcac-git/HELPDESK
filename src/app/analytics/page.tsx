@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import TopBar from "@/components/layout/TopBar";
 import {
   TrendingUp,
@@ -28,7 +29,7 @@ import {
   Cell,
 } from "recharts";
 import { cn } from "@/lib/utils";
-import { volumeForecast } from "@/data/mock";
+import { volumeForecast, type CategorySlug } from "@/data/mock";
 
 const channelDistribution = [
   { name: "Email",     value: 38, color: "#017764" },
@@ -46,20 +47,20 @@ const agentPerformance = [
   { name: "Chloé P.",  resolved: 42, aht: 9.4,  csat: 4.5, fcr: 78 },
 ];
 
-const resolutionByCategory = [
-  { category: "Réseau/VPN",     tickets: 234, autoRate: 28, avgTime: 45  },
-  { category: "Auth/MDP",       tickets: 189, autoRate: 78, avgTime: 8   },
-  { category: "API",            tickets: 142, autoRate: 12, avgTime: 120 },
-  { category: "Administration", tickets: 98,  autoRate: 45, avgTime: 30  },
-  { category: "Sécurité",       tickets: 76,  autoRate: 5,  avgTime: 180 },
+const resolutionByCategory: { category: CategorySlug; tickets: number; autoRate: number; avgTime: number }[] = [
+  { category: "network", tickets: 234, autoRate: 28, avgTime: 45  },
+  { category: "auth",    tickets: 189, autoRate: 78, avgTime: 8   },
+  { category: "api",     tickets: 142, autoRate: 12, avgTime: 120 },
+  { category: "admin",   tickets: 98,  autoRate: 45, avgTime: 30  },
+  { category: "security",tickets: 76,  autoRate: 5,  avgTime: 180 },
 ];
 
 const burnoutRisk = [
-  { subject: "Volume",         A: 85, fullMark: 100 },
-  { subject: "Sentiment reçu", A: 62, fullMark: 100 },
-  { subject: "Heures supp.",   A: 45, fullMark: 100 },
-  { subject: "FCR",            A: 78, fullMark: 100 },
-  { subject: "Complexité",     A: 70, fullMark: 100 },
+  { subjectKey: "volume",            A: 85, fullMark: 100 },
+  { subjectKey: "sentimentReceived", A: 62, fullMark: 100 },
+  { subjectKey: "overtime",          A: 45, fullMark: 100 },
+  { subjectKey: "fcr",               A: 78, fullMark: 100 },
+  { subjectKey: "complexity",        A: 70, fullMark: 100 },
 ];
 
 const hourlyLoad = [
@@ -80,9 +81,22 @@ const tooltipStyle = {
 };
 
 export default function AnalyticsPage() {
+  const t = useTranslations("analytics");
+  const tCommon = useTranslations("common");
+
+  const volumeForecastLocalized = volumeForecast.map(d => ({ ...d, dayLabel: tCommon(`days.${d.day}`) }));
+  const burnoutRiskLocalized = burnoutRisk.map(b => ({ ...b, subject: t(`burnout.subjects.${b.subjectKey}`) }));
+
+  const kpis = [
+    { label: t("kpi.fcr"),           value: "76.4%",  delta: "+3.2%", up: true, icon: TrendingUp, colorClass: "text-[#017764]" },
+    { label: t("kpi.aht"),           value: "9m 47s", delta: "-1.3m", up: true, icon: Clock,       colorClass: "text-[#017764]" },
+    { label: t("kpi.aiAutoResolve"), value: "34.2%",  delta: "+8.1%", up: true, icon: Bot,         colorClass: "text-[#8a852a]" },
+    { label: t("kpi.globalCsat"),    value: "4.6/5",  delta: "+0.2",  up: true, icon: Star,        colorClass: "text-[#8a852a]" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopBar title="Analytics Prédictif" subtitle="Machine Learning · Horizon 7 jours · Rafraîchi toutes les 5 min" />
+      <TopBar title={t("title")} subtitle={t("subtitle")} />
 
       <div className="p-6 space-y-6">
         {/* Prediction Alerts */}
@@ -90,22 +104,22 @@ export default function AnalyticsPage() {
           <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-200 rounded-xl">
             <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-orange-700 mb-1">Goulot prédit — Équipe Réseau</p>
-              <p className="text-xs text-gray-600">Saturation détectée à 14h30 (+78% volume vs capacité). 3 agents en renfort recommandés.</p>
+              <p className="text-sm font-semibold text-orange-700 mb-1">{t("bottleneckTitle")}</p>
+              <p className="text-xs text-gray-600">{t("bottleneckDesc")}</p>
               <div className="flex gap-2 mt-3">
-                <button className="text-[11px] px-3 py-1.5 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200 transition-colors">Mobiliser renforts</button>
-                <button className="text-[11px] px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors">Ignorer</button>
+                <button className="text-[11px] px-3 py-1.5 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200 transition-colors">{t("mobilize")}</button>
+                <button className="text-[11px] px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors">{t("dismiss")}</button>
               </div>
             </div>
           </div>
           <div className="flex items-start gap-3 p-4 bg-[#017764]/8 border border-[#017764]/20 rounded-xl">
             <Bot className="w-5 h-5 text-[#017764] shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-[#017764] mb-1">Knowledge Gap détecté</p>
-              <p className="text-xs text-gray-600">12 tickets similaires cette semaine sans article KB pertinent (catégorie: Erreur SSL VPN). Créer l&apos;article ?</p>
+              <p className="text-sm font-semibold text-[#017764] mb-1">{t("knowledgeGapTitle")}</p>
+              <p className="text-xs text-gray-600">{t("knowledgeGapDesc")}</p>
               <div className="flex gap-2 mt-3">
-                <button className="text-[11px] px-3 py-1.5 bg-[#017764]/15 text-[#017764] rounded-lg hover:bg-[#017764]/25 transition-colors">Créer article IA</button>
-                <button className="text-[11px] px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors">Plus tard</button>
+                <button className="text-[11px] px-3 py-1.5 bg-[#017764]/15 text-[#017764] rounded-lg hover:bg-[#017764]/25 transition-colors">{t("createAiArticle")}</button>
+                <button className="text-[11px] px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors">{t("later")}</button>
               </div>
             </div>
           </div>
@@ -113,12 +127,7 @@ export default function AnalyticsPage() {
 
         {/* KPI Row */}
         <div className="grid grid-cols-4 gap-4">
-          {[
-            { label: "FCR (First Contact)",    value: "76.4%",  delta: "+3.2%", up: true,  icon: TrendingUp, colorClass: "text-[#017764]" },
-            { label: "AHT moyen",              value: "9m 47s", delta: "-1.3m", up: true,  icon: Clock,      colorClass: "text-[#017764]" },
-            { label: "Auto-résolution IA",     value: "34.2%",  delta: "+8.1%", up: true,  icon: Bot,        colorClass: "text-[#8a852a]" },
-            { label: "CSAT global",            value: "4.6/5",  delta: "+0.2",  up: true,  icon: Star,       colorClass: "text-[#8a852a]" },
-          ].map(kpi => (
+          {kpis.map(kpi => (
             <div key={kpi.label} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <kpi.icon className={cn("w-4 h-4", kpi.colorClass)} />
@@ -137,8 +146,8 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-3 gap-6">
           {/* Hourly Load */}
           <div className="col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Charge horaire — Aujourd&apos;hui</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Identifiez les pics pour optimiser la couverture agent</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("hourlyLoad.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("hourlyLoad.subtitle")}</p>
             <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={hourlyLoad}>
                 <defs>
@@ -151,15 +160,15 @@ export default function AnalyticsPage() {
                 <XAxis dataKey="hour" tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Area type="monotone" dataKey="load" stroke="#017764" fill="url(#loadGrad)" strokeWidth={2} name="Tickets/h" />
+                <Area type="monotone" dataKey="load" stroke="#017764" fill="url(#loadGrad)" strokeWidth={2} name={t("hourlyLoad.series")} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
           {/* Channel Pie */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Distribution canaux</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Cette semaine</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("channelDistribution.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("channelDistribution.subtitle")}</p>
             <div className="flex items-center justify-center">
               <ResponsiveContainer width={150} height={150}>
                 <PieChart>
@@ -188,12 +197,12 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 gap-6">
           {/* Agent Performance */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Performance agents</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Cette semaine · Trié par CSAT</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("agentPerformance.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("agentPerformance.subtitle")}</p>
             <div className="space-y-2">
               <div className="flex items-center gap-3 pb-2 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                <span className="flex-1">Agent</span>
-                <span className="w-12 text-right">Résolus</span>
+                <span className="flex-1">{t("agentPerformance.agent")}</span>
+                <span className="w-12 text-right">{t("agentPerformance.resolved")}</span>
                 <span className="w-12 text-right">AHT</span>
                 <span className="w-12 text-right">CSAT</span>
                 <span className="w-12 text-right">FCR</span>
@@ -205,7 +214,7 @@ export default function AnalyticsPage() {
                       {agent.name.split(" ").map(n => n[0]).join("")}
                     </div>
                     <span className="text-[11px] text-gray-700">{agent.name}</span>
-                    {i === 0 && <span className="text-[9px] text-[#8a852a]">★ Top</span>}
+                    {i === 0 && <span className="text-[9px] text-[#8a852a]">{t("agentPerformance.top")}</span>}
                   </div>
                   <span className="w-12 text-right text-[11px] text-gray-700">{agent.resolved}</span>
                   <span className="w-12 text-right text-[11px] text-gray-700">{agent.aht}m</span>
@@ -222,19 +231,19 @@ export default function AnalyticsPage() {
 
           {/* Resolution by category */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Résolution par catégorie</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Taux d&apos;auto-résolution IA · Cette semaine</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("resolutionByCategory.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("resolutionByCategory.subtitle")}</p>
             <div className="space-y-3">
               {resolutionByCategory.map(cat => (
                 <div key={cat.category}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] text-gray-700">{cat.category}</span>
+                    <span className="text-[11px] text-gray-700">{t(`categories.${cat.category}`)}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-gray-400">{cat.tickets} tickets</span>
+                      <span className="text-[10px] text-gray-400">{cat.tickets} {t("resolutionByCategory.tickets")}</span>
                       <span className={cn("text-[10px] font-bold",
                         cat.autoRate >= 50 ? "text-[#017764]" : cat.autoRate >= 20 ? "text-[#8a852a]" : "text-gray-400"
                       )}>
-                        {cat.autoRate}% IA
+                        {cat.autoRate}{t("resolutionByCategory.aiSuffix")}
                       </span>
                     </div>
                   </div>
@@ -256,32 +265,32 @@ export default function AnalyticsPage() {
         {/* Burnout + Volume Trend */}
         <div className="grid grid-cols-3 gap-6">
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Risque d&apos;épuisement — Équipe</h3>
-            <p className="text-[11px] text-gray-400 mb-2">Score calculé toutes les 4h · Sophie M.</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("burnout.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-2">{t("burnout.subtitle")}</p>
             <ResponsiveContainer width="100%" height={200}>
-              <RadarChart data={burnoutRisk}>
+              <RadarChart data={burnoutRiskLocalized}>
                 <PolarGrid stroke="#e5e7eb" />
                 <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: "#9ca3af" }} />
                 <Radar name="Score" dataKey="A" stroke="#017764" fill="#017764" fillOpacity={0.15} />
               </RadarChart>
             </ResponsiveContainer>
             <div className="mt-2 flex items-center justify-between">
-              <span className="text-[11px] text-gray-400">Score global</span>
-              <span className="text-sm font-bold text-[#8a852a]">68/100 — Modéré</span>
+              <span className="text-[11px] text-gray-400">{t("burnout.globalScore")}</span>
+              <span className="text-sm font-bold text-[#8a852a]">{t("burnout.value")}</span>
             </div>
           </div>
 
           <div className="col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Volume tickets — Tendance 7 jours</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Réel vs Prédit · Modèle Prophet</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("volumeTrend.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("volumeTrend.subtitle")}</p>
             <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={volumeForecast}>
+              <LineChart data={volumeForecastLocalized}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="dayLabel" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Line type="monotone" dataKey="actual" stroke="#017764" strokeWidth={2.5} dot={{ fill: "#017764", r: 3 }} name="Réel" connectNulls={false} />
-                <Line type="monotone" dataKey="predicted" stroke="#b0aa34" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Prédit" />
+                <Line type="monotone" dataKey="actual" stroke="#017764" strokeWidth={2.5} dot={{ fill: "#017764", r: 3 }} name={t("volumeTrend.actual")} connectNulls={false} />
+                <Line type="monotone" dataKey="predicted" stroke="#b0aa34" strokeWidth={2} strokeDasharray="5 5" dot={false} name={t("volumeTrend.predicted")} />
               </LineChart>
             </ResponsiveContainer>
           </div>

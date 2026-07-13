@@ -5,21 +5,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatRelativeTime(date: Date): string {
+type TimeTranslator = (key: string, values?: Record<string, number | string>) => string;
+
+export function formatRelativeTime(date: Date, t: TimeTranslator): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return "À l'instant";
-  if (minutes < 60) return `Il y a ${minutes}m`;
-  if (hours < 24) return `Il y a ${hours}h`;
-  return `Il y a ${days}j`;
+  if (minutes < 1) return t("justNow");
+  if (minutes < 60) return t("minutesAgo", { count: minutes });
+  if (hours < 24) return t("hoursAgo", { count: hours });
+  return t("daysAgo", { count: days });
 }
 
-export function formatSLA(minutes: number): { text: string; color: string } {
-  if (minutes <= 0) return { text: "EXPIRÉ", color: "text-red-500" };
+export function formatSLA(minutes: number, t: TimeTranslator): { text: string; color: string } {
+  if (minutes <= 0) return { text: t("slaExpired"), color: "text-red-500" };
   if (minutes <= 30) return { text: `${minutes}m`, color: "text-red-400" };
   if (minutes <= 60) return { text: `${minutes}m`, color: "text-orange-400" };
   const hours = Math.floor(minutes / 60);

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import TopBar from "@/components/layout/TopBar";
 import {
   TicketCheck,
@@ -35,6 +36,7 @@ import {
   tickets,
 } from "@/data/mock";
 import { cn, formatSLA } from "@/lib/utils";
+import type { Locale } from "@/i18n/config";
 
 const priorityColor: Record<string, string> = {
   P1: "bg-red-500/15 text-red-600 border-red-400/30",
@@ -110,33 +112,38 @@ function StatCard({
 }
 
 export default function Dashboard() {
+  const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
+
+  const volumeForecastLocalized = volumeForecast.map(d => ({ ...d, dayLabel: tCommon(`days.${d.day}`) }));
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopBar title="Command Center" subtitle="Vue temps réel · Mis à jour il y a 12s" />
+      <TopBar title={t("title")} subtitle={t("subtitle")} />
 
       <div className="p-6 space-y-6">
         {/* Alert Banner */}
         <div className="flex items-center gap-3 px-4 py-3 bg-orange-50 border border-orange-200 rounded-xl">
           <AlertTriangle className="w-4 h-4 text-orange-500 shrink-0" />
           <div className="flex-1">
-            <span className="text-orange-600 text-sm font-medium">Alerte prédictive : </span>
-            <span className="text-gray-700 text-sm">
-              Volume prédit +23% dans les 4 prochaines heures. Équipe Réseau à risque de saturation à 14h30.
-            </span>
+            <span className="text-orange-600 text-sm font-medium">{t("alertPrefix")}</span>
+            <span className="text-gray-700 text-sm">{t("alertText")}</span>
           </div>
           <button className="flex items-center gap-1 text-orange-600 text-xs font-medium hover:text-orange-700 transition-colors shrink-0">
-            Actions suggérées <ChevronRight className="w-3.5 h-3.5" />
+            {t("alertAction")} <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* KPI Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <StatCard icon={TicketCheck} label="Tickets ouverts" value={dashboardStats.openTickets} delta={-8} deltaLabel="vs hier" color="primary" />
-          <StatCard icon={Bot} label="Résolus par IA" value={dashboardStats.aiResolvedAuto} delta={12} deltaLabel="auto aujourd'hui" color="emerald" />
-          <StatCard icon={Clock} label="Temps réponse" value={dashboardStats.avgResponseTime} color="blue" />
-          <StatCard icon={Star} label="CSAT moyen" value={dashboardStats.csat} delta={3} deltaLabel="sur 5.0" color="accent" />
-          <StatCard icon={AlertTriangle} label="Breaches SLA" value={dashboardStats.slaBreaches} delta={-2} deltaLabel="vs hier" color="red" />
-          <StatCard icon={Users} label="Agents en ligne" value={`${dashboardStats.agentsOnline}/24`} color="blue" />
+          <StatCard icon={TicketCheck} label={t("kpi.openTickets")} value={dashboardStats.openTickets} delta={-8} deltaLabel={t("kpi.vsYesterday")} color="primary" />
+          <StatCard icon={Bot} label={t("kpi.aiResolved")} value={dashboardStats.aiResolvedAuto} delta={12} deltaLabel={t("kpi.autoToday")} color="emerald" />
+          <StatCard icon={Clock} label={t("kpi.responseTime")} value={dashboardStats.avgResponseTime} color="blue" />
+          <StatCard icon={Star} label={t("kpi.avgCsat")} value={dashboardStats.csat} delta={3} deltaLabel={t("kpi.outOf5")} color="accent" />
+          <StatCard icon={AlertTriangle} label={t("kpi.slaBreaches")} value={dashboardStats.slaBreaches} delta={-2} deltaLabel={t("kpi.vsYesterday")} color="red" />
+          <StatCard icon={Users} label={t("kpi.agentsOnline")} value={`${dashboardStats.agentsOnline}/24`} color="blue" />
         </div>
 
         {/* Charts Row 1 */}
@@ -145,64 +152,64 @@ export default function Dashboard() {
           <div className="col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Volume tickets — Prévision ML</h3>
-                <p className="text-[11px] text-gray-400">Horizon 7 jours · Modèle Prophet</p>
+                <h3 className="text-sm font-semibold text-gray-900">{t("volumeChart.title")}</h3>
+                <p className="text-[11px] text-gray-400">{t("volumeChart.subtitle")}</p>
               </div>
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1.5 text-[11px] text-gray-500">
-                  <span className="w-3 h-2 rounded inline-block" style={{ backgroundColor: "#017764" }} /> Réel
+                  <span className="w-3 h-2 rounded inline-block" style={{ backgroundColor: "#017764" }} /> {t("volumeChart.actual")}
                 </span>
                 <span className="flex items-center gap-1.5 text-[11px] text-gray-500">
-                  <span className="w-3 h-2 rounded inline-block opacity-70" style={{ backgroundColor: "#b0aa34" }} /> Prédit
+                  <span className="w-3 h-2 rounded inline-block opacity-70" style={{ backgroundColor: "#b0aa34" }} /> {t("volumeChart.predicted")}
                 </span>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={volumeForecast} barGap={4}>
+              <BarChart data={volumeForecastLocalized} barGap={4}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="dayLabel" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#111827" }} />
-                <Bar dataKey="actual" fill="#017764" radius={[4, 4, 0, 0]} name="Réel" />
-                <Bar dataKey="predicted" fill="#b0aa34" radius={[4, 4, 0, 0]} name="Prédit" opacity={0.75} />
+                <Bar dataKey="actual" fill="#017764" radius={[4, 4, 0, 0]} name={t("volumeChart.actual")} />
+                <Bar dataKey="predicted" fill="#b0aa34" radius={[4, 4, 0, 0]} name={t("volumeChart.predicted")} opacity={0.75} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           {/* AI Actions Panel */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">IA — Actions suggérées</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Basées sur l&apos;analyse prédictive</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("aiActions.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("aiActions.subtitle")}</p>
             <div className="space-y-3">
               <div className="p-3 bg-[#017764]/8 border border-[#017764]/20 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Zap className="w-3.5 h-3.5 text-[#017764] mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[11px] font-medium text-[#017764]">Activer réponse auto &quot;Reset MDP&quot;</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">Économie estimée : ~120 tickets/sem</p>
+                    <p className="text-[11px] font-medium text-[#017764]">{t("aiActions.action1Title")}</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">{t("aiActions.action1Desc")}</p>
                   </div>
                 </div>
-                <button className="mt-2 w-full text-[10px] py-1 bg-[#017764]/15 text-[#017764] rounded hover:bg-[#017764]/25 transition-colors">Appliquer</button>
+                <button className="mt-2 w-full text-[10px] py-1 bg-[#017764]/15 text-[#017764] rounded hover:bg-[#017764]/25 transition-colors">{t("aiActions.action1Button")}</button>
               </div>
               <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Users className="w-3.5 h-3.5 text-orange-500 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[11px] font-medium text-orange-600">Renfort Équipe Réseau</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">3 agents disponibles à mobiliser</p>
+                    <p className="text-[11px] font-medium text-orange-600">{t("aiActions.action2Title")}</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">{t("aiActions.action2Desc")}</p>
                   </div>
                 </div>
-                <button className="mt-2 w-full text-[10px] py-1 bg-orange-100 text-orange-600 rounded hover:bg-orange-200 transition-colors">Notifier</button>
+                <button className="mt-2 w-full text-[10px] py-1 bg-orange-100 text-orange-600 rounded hover:bg-orange-200 transition-colors">{t("aiActions.action2Button")}</button>
               </div>
               <div className="p-3 bg-[#b0aa34]/8 border border-[#b0aa34]/20 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Activity className="w-3.5 h-3.5 text-[#8a852a] mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[11px] font-medium text-[#8a852a]">Ajuster SLA P2 — Lundi matin</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">Pic historique détecté 9h–11h</p>
+                    <p className="text-[11px] font-medium text-[#8a852a]">{t("aiActions.action3Title")}</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">{t("aiActions.action3Desc")}</p>
                   </div>
                 </div>
-                <button className="mt-2 w-full text-[10px] py-1 bg-[#b0aa34]/15 text-[#8a852a] rounded hover:bg-[#b0aa34]/25 transition-colors">Configurer</button>
+                <button className="mt-2 w-full text-[10px] py-1 bg-[#b0aa34]/15 text-[#8a852a] rounded hover:bg-[#b0aa34]/25 transition-colors">{t("aiActions.action3Button")}</button>
               </div>
             </div>
           </div>
@@ -213,8 +220,8 @@ export default function Dashboard() {
           {/* Sentiment */}
           <div className="col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
             <div className="mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Sentiment client — Temps réel</h3>
-              <p className="text-[11px] text-gray-400">Analyse NLP par message · Aujourd&apos;hui</p>
+              <h3 className="text-sm font-semibold text-gray-900">{t("sentimentChart.title")}</h3>
+              <p className="text-[11px] text-gray-400">{t("sentimentChart.subtitle")}</p>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={sentimentTrend}>
@@ -222,22 +229,22 @@ export default function Dashboard() {
                 <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Area type="monotone" dataKey="positive" stackId="1" stroke="#017764" fill="#017764" fillOpacity={0.25} name="Positif" />
-                <Area type="monotone" dataKey="neutral" stackId="1" stroke="#9ca3af" fill="#9ca3af" fillOpacity={0.2} name="Neutre" />
-                <Area type="monotone" dataKey="negative" stackId="1" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} name="Négatif" />
+                <Area type="monotone" dataKey="positive" stackId="1" stroke="#017764" fill="#017764" fillOpacity={0.25} name={t("sentimentChart.positive")} />
+                <Area type="monotone" dataKey="neutral" stackId="1" stroke="#9ca3af" fill="#9ca3af" fillOpacity={0.2} name={t("sentimentChart.neutral")} />
+                <Area type="monotone" dataKey="negative" stackId="1" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} name={t("sentimentChart.negative")} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
           {/* Team Performance */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Performance équipes</h3>
-            <p className="text-[11px] text-gray-400 mb-4">Aujourd&apos;hui</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("teamPerformance.title")}</h3>
+            <p className="text-[11px] text-gray-400 mb-4">{t("teamPerformance.subtitle")}</p>
             <div className="space-y-3">
               {teamPerformance.map((team) => (
-                <div key={team.team}>
+                <div key={team.team.fr}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] text-gray-700">{team.team}</span>
+                    <span className="text-[11px] text-gray-700">{team.team[locale]}</span>
                     <span className={cn("text-[10px] font-bold",
                       team.slaOk >= 95 ? "text-[#017764]" : team.slaOk >= 85 ? "text-[#8a852a]" : "text-red-500"
                     )}>
@@ -254,9 +261,9 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="flex gap-2 mt-0.5">
-                    <span className="text-[10px] text-[#017764]">{team.resolved} résolus</span>
+                    <span className="text-[10px] text-[#017764]">{team.resolved} {t("teamPerformance.resolved")}</span>
                     <span className="text-[10px] text-gray-300">·</span>
-                    <span className="text-[10px] text-orange-500">{team.pending} en attente</span>
+                    <span className="text-[10px] text-orange-500">{team.pending} {t("teamPerformance.pending")}</span>
                   </div>
                 </div>
               ))}
@@ -268,16 +275,16 @@ export default function Dashboard() {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Tickets critiques — En cours</h3>
-              <p className="text-[11px] text-gray-400">Triés par urgence SLA · Mise à jour en temps réel</p>
+              <h3 className="text-sm font-semibold text-gray-900">{t("liveTickets.title")}</h3>
+              <p className="text-[11px] text-gray-400">{t("liveTickets.subtitle")}</p>
             </div>
             <Link href="/tickets" className="flex items-center gap-1 text-[11px] text-[#017764] hover:text-[#015a4d] transition-colors">
-              Voir tous <ArrowUpRight className="w-3 h-3" />
+              {t("liveTickets.viewAll")} <ArrowUpRight className="w-3 h-3" />
             </Link>
           </div>
           <div className="space-y-2">
             {tickets.filter(t => t.status === "open").slice(0, 4).map((ticket) => {
-              const sla = formatSLA(ticket.slaMinutesLeft);
+              const sla = formatSLA(ticket.slaMinutesLeft, tTime);
               return (
                 <Link
                   key={ticket.id}
@@ -289,12 +296,12 @@ export default function Dashboard() {
                   </span>
                   <span className="text-lg shrink-0">{channelIcon[ticket.channel]}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-800 truncate">{ticket.title}</p>
+                    <p className="text-xs font-medium text-gray-800 truncate">{ticket.title[locale]}</p>
                     <p className="text-[10px] text-gray-400">{ticket.contact.name} · {ticket.contact.company}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className={cn("text-xs font-bold tabular-nums", sla.color)}>{sla.text}</p>
-                    <p className="text-[10px] text-gray-400">SLA restant</p>
+                    <p className="text-[10px] text-gray-400">{t("liveTickets.slaRemaining")}</p>
                   </div>
                   <span className="text-xl shrink-0">{sentimentEmoji[ticket.sentiment]}</span>
                   <div className="text-right shrink-0 min-w-[60px]">
@@ -302,9 +309,9 @@ export default function Dashboard() {
                       ticket.aiConfidence >= 0.85 ? "text-[#017764]" :
                       ticket.aiConfidence >= 0.6 ? "text-[#8a852a]" : "text-gray-400"
                     )}>
-                      IA {Math.round(ticket.aiConfidence * 100)}%
+                      {tCommon("aiPrefix")} {Math.round(ticket.aiConfidence * 100)}%
                     </p>
-                    <p className="text-[10px] text-gray-400">confiance</p>
+                    <p className="text-[10px] text-gray-400">{t("liveTickets.confidence")}</p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#017764] transition-colors shrink-0" />
                 </Link>

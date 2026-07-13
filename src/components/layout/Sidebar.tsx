@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { useTransition } from "react";
 import {
   LayoutDashboard,
   Ticket,
@@ -17,15 +19,17 @@ import {
 import { cn } from "@/lib/utils";
 import { agents } from "@/data/mock";
 import afcacLogo from "@/images/afcac_logo.png";
+import { setLocale } from "@/i18n/actions";
+import { locales, localeLabels, type Locale } from "@/i18n/config";
 
 const navItems = [
-  { href: "/", icon: LayoutDashboard, label: "Command Center" },
-  { href: "/tickets", icon: Ticket, label: "Tickets" },
-  { href: "/workflow", icon: GitBranch, label: "Workflows" },
-  { href: "/analytics", icon: BarChart3, label: "Analytics" },
-  { href: "/knowledge", icon: BookOpen, label: "Base de connaissances" },
-  { href: "/settings", icon: Settings, label: "Paramètres" },
-];
+  { href: "/", icon: LayoutDashboard, key: "dashboard" },
+  { href: "/tickets", icon: Ticket, key: "tickets" },
+  { href: "/workflow", icon: GitBranch, key: "workflows" },
+  { href: "/analytics", icon: BarChart3, key: "analytics" },
+  { href: "/knowledge", icon: BookOpen, key: "knowledge" },
+  { href: "/settings", icon: Settings, key: "settings" },
+] as const;
 
 const statusColor: Record<string, string> = {
   online: "bg-emerald-400",
@@ -36,6 +40,15 @@ const statusColor: Record<string, string> = {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations("sidebar");
+  const locale = useLocale() as Locale;
+  const [isPending, startTransition] = useTransition();
+
+  const handleLocaleChange = (next: Locale) => {
+    startTransition(() => {
+      setLocale(next);
+    });
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0 z-40">
@@ -51,18 +64,38 @@ export default function Sidebar() {
         </div>
       </div>
 
+      {/* Language switcher */}
+      <div className="px-5 pt-3">
+        <div className="flex items-center gap-0.5 p-0.5 bg-gray-100 rounded-lg">
+          {locales.map((l) => (
+            <button
+              key={l}
+              onClick={() => handleLocaleChange(l)}
+              disabled={isPending}
+              title={localeLabels[l]}
+              className={cn(
+                "flex-1 text-[10px] font-semibold uppercase py-1 rounded-md transition-colors",
+                locale === l ? "bg-white text-[#017764] shadow-sm" : "text-gray-400 hover:text-gray-600"
+              )}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Search */}
-      <div className="px-3 pt-4 pb-2">
+      <div className="px-3 pt-3 pb-2">
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 text-gray-400 text-sm cursor-pointer hover:border-[#017764]/50 transition-colors">
           <Search className="w-3.5 h-3.5" />
-          <span className="flex-1 text-xs">Recherche...</span>
+          <span className="flex-1 text-xs">{t("searchPlaceholder")}</span>
           <kbd className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-400">⌘K</kbd>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-0.5">
-        {navItems.map(({ href, icon: Icon, label }) => {
+        {navItems.map(({ href, icon: Icon, key }) => {
           const active = pathname === href;
           return (
             <Link
@@ -76,7 +109,7 @@ export default function Sidebar() {
               )}
             >
               <Icon className={cn("w-4 h-4 shrink-0", active ? "text-[#017764]" : "")} />
-              {label}
+              {t(`nav.${key}`)}
               {href === "/tickets" && (
                 <span className="ml-auto bg-[#017764] text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                   127
@@ -90,9 +123,9 @@ export default function Sidebar() {
       {/* Online agents */}
       <div className="px-3 py-3 border-t border-gray-200">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Agents</span>
+          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t("agents")}</span>
           <span className="text-[11px] text-[#017764] flex items-center gap-1">
-            <Wifi className="w-3 h-3" /> 18 en ligne
+            <Wifi className="w-3 h-3" /> {t("onlineCount", { count: 18 })}
           </span>
         </div>
         <div className="space-y-1">
@@ -106,7 +139,7 @@ export default function Sidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] text-gray-700 truncate">{agent.name}</p>
-                <p className="text-[10px] text-gray-400">{agent.ticketsOpen} tickets</p>
+                <p className="text-[10px] text-gray-400">{t("ticketsCount", { count: agent.ticketsOpen })}</p>
               </div>
             </div>
           ))}
@@ -123,8 +156,8 @@ export default function Sidebar() {
             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-gray-800">Admin User</p>
-            <p className="text-[10px] text-gray-400">Super Admin</p>
+            <p className="text-xs font-medium text-gray-800">{t("currentUser")}</p>
+            <p className="text-[10px] text-gray-400">{t("currentUserRole")}</p>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
         </div>

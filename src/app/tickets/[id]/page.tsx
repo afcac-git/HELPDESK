@@ -2,6 +2,7 @@
 
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { tickets } from "@/data/mock";
 import { cn, formatSLA, formatRelativeTime } from "@/lib/utils";
 import {
@@ -30,6 +31,7 @@ import {
   Plus,
 } from "lucide-react";
 import type { Channel } from "@/data/mock";
+import type { Locale } from "@/i18n/config";
 
 const channelIcon: Record<Channel, string> = {
   whatsapp: "💬",
@@ -54,38 +56,53 @@ const tierColor: Record<string, string> = {
   Starter: "text-gray-500 bg-gray-100 border-gray-200",
 };
 
-const sentimentConfig: Record<string, { emoji: string; label: string; bar: string; text: string }> = {
-  frustrated: { emoji: "😤", label: "Frustration", bar: "bg-red-500",    text: "text-red-600" },
-  urgent:     { emoji: "🚨", label: "Urgent",      bar: "bg-orange-500", text: "text-orange-600" },
-  neutral:    { emoji: "😐", label: "Neutre",       bar: "bg-gray-400",   text: "text-gray-500" },
-  positive:   { emoji: "😊", label: "Positif",      bar: "bg-[#017764]",  text: "text-[#017764]" },
+const sentimentConfig: Record<string, { emoji: string; bar: string; text: string }> = {
+  frustrated: { emoji: "😤", bar: "bg-red-500",    text: "text-red-600" },
+  urgent:     { emoji: "🚨", bar: "bg-orange-500", text: "text-orange-600" },
+  neutral:    { emoji: "😐", bar: "bg-gray-400",   text: "text-gray-500" },
+  positive:   { emoji: "😊", bar: "bg-[#017764]",  text: "text-[#017764]" },
 };
 
 export default function TicketDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const ticket = tickets.find(t => t.id === id);
+  const t = useTranslations("ticketDetail");
+  const tCommon = useTranslations("common");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
+  const ticket = tickets.find(tk => tk.id === id);
   const [message, setMessage] = useState("");
   const [draftEditing, setDraftEditing] = useState(false);
-  const [draft, setDraft] = useState(ticket?.aiDraft || "");
+  const [draft, setDraft] = useState(ticket?.aiDraft?.[locale] || "");
   const [activeTab, setActiveTab] = useState<"ai" | "kb" | "collab">("ai");
 
   if (!ticket) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">Ticket introuvable</p>
+          <p className="text-gray-500 mb-4">{t("notFound")}</p>
           <button onClick={() => router.push("/tickets")} className="text-[#017764] text-sm hover:text-[#015a4d]">
-            ← Retour aux tickets
+            {t("backToTickets")}
           </button>
         </div>
       </div>
     );
   }
 
-  const sla = formatSLA(ticket.slaMinutesLeft);
+  const sla = formatSLA(ticket.slaMinutesLeft, tTime);
   const sentiment = sentimentConfig[ticket.sentiment];
   const slaPercent = Math.max(0, Math.min(100, (ticket.slaMinutesLeft / 120) * 100));
+
+  const kbArticles = [
+    { id: "kb1", title: t("kbArticles.article1Title"), relevance: 0.94, category: "network" as const },
+    { id: "kb5", title: t("kbArticles.article2Title"), relevance: 0.78, category: "network" as const },
+    { id: "kb3", title: t("kbArticles.article3Title"), relevance: 0.61, category: "security" as const },
+  ];
+
+  const experts = [
+    { name: "Théo Moreau", team: t("experts.theoTeam"), status: "online" as const },
+    { name: "Emma Dubois", team: t("experts.emmaTeam"), status: "busy" as const },
+  ];
 
   return (
     <div className="h-screen bg-white flex flex-col">
@@ -101,7 +118,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
             {ticket.priority}
           </span>
           <span className="text-xl shrink-0">{channelIcon[ticket.channel]}</span>
-          <h1 className="text-sm font-semibold text-gray-900 truncate">{ticket.title}</h1>
+          <h1 className="text-sm font-semibold text-gray-900 truncate">{ticket.title[locale]}</h1>
           {ticket.contact.tier === "VIP" && (
             <span className="shrink-0 flex items-center gap-1 px-2 py-0.5 bg-[#b0aa34]/10 border border-[#b0aa34]/25 rounded text-[10px] text-[#8a852a] font-bold">
               <Star className="w-3 h-3" /> VIP
@@ -131,7 +148,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
           <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gray-100", sentiment.text)}>
             <span className="text-base">{sentiment.emoji}</span>
             <div>
-              <p className="text-[10px] font-medium">{sentiment.label}</p>
+              <p className="text-[10px] font-medium">{tCommon(`sentiment.${ticket.sentiment}`)}</p>
               <div className="w-12 bg-gray-200 rounded-full h-1 mt-0.5">
                 <div className={cn("h-1 rounded-full", sentiment.bar)} style={{ width: `${Math.round(ticket.sentimentScore * 100)}%` }} />
               </div>
@@ -142,10 +159,10 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
         {/* Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#017764] hover:bg-[#015a4d] text-white text-[11px] font-semibold rounded-lg transition-colors shadow-lg shadow-[#017764]/20">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Résoudre
+            <CheckCircle2 className="w-3.5 h-3.5" /> {t("resolve")}
           </button>
           <button className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[11px] font-medium rounded-lg transition-colors border border-gray-200">
-            <ArrowUp className="w-3.5 h-3.5" /> Escalader
+            <ArrowUp className="w-3.5 h-3.5" /> {t("escalate")}
           </button>
           <button className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors border border-gray-200">
             <Clock className="w-4 h-4" />
@@ -163,7 +180,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
           <div className="p-4 space-y-5">
             {/* Contact */}
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Contact</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("contact")}</p>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#017764] to-[#b0aa34] flex items-center justify-center text-xs font-bold text-white">
                   {ticket.contact.name.slice(0, 2).toUpperCase()}
@@ -175,13 +192,13 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Tier</span>
+                  <span className="text-[10px] text-gray-400">{t("tier")}</span>
                   <span className={cn("text-[10px] border px-1.5 py-0.5 rounded font-medium", tierColor[ticket.contact.tier])}>
                     {ticket.contact.tier}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Health Score</span>
+                  <span className="text-[10px] text-gray-400">{t("healthScore")}</span>
                   <div className="flex items-center gap-1.5">
                     <div className="w-12 bg-gray-200 rounded-full h-1">
                       <div
@@ -196,11 +213,11 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">CSAT</span>
+                  <span className="text-[10px] text-gray-400">{t("csat")}</span>
                   <span className="text-[10px] text-[#8a852a] font-medium">★ {ticket.contact.csat}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Total tickets</span>
+                  <span className="text-[10px] text-gray-400">{t("totalTickets")}</span>
                   <span className="text-[10px] text-gray-600">{ticket.contact.totalTickets}</span>
                 </div>
               </div>
@@ -208,19 +225,19 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
 
             {/* Assets */}
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Assets</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("assets")}</p>
               <div className="space-y-2">
                 <div className="p-2 bg-white rounded-lg border border-gray-200">
                   <div className="flex items-center justify-between mb-0.5">
                     <span className="text-[11px] text-gray-700 font-medium">VPN Corp</span>
-                    <span className="text-[9px] text-orange-500 font-bold">Expire 2j</span>
+                    <span className="text-[9px] text-orange-500 font-bold">{t("assetVpnExpiry")}</span>
                   </div>
                   <p className="text-[10px] text-gray-400">Cisco AnyConnect v4.8</p>
                 </div>
                 <div className="p-2 bg-white rounded-lg border border-gray-200">
                   <div className="flex items-center justify-between mb-0.5">
                     <span className="text-[11px] text-gray-700 font-medium">Laptop</span>
-                    <span className="text-[9px] text-[#017764] font-bold">OK</span>
+                    <span className="text-[9px] text-[#017764] font-bold">{t("assetLaptopOk")}</span>
                   </div>
                   <p className="text-[10px] text-gray-400">ThinkPad X1 Carbon</p>
                 </div>
@@ -230,7 +247,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
             {/* Related Tickets */}
             {ticket.relatedTickets.length > 0 && (
               <div>
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Tickets liés</p>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("relatedTickets")}</p>
                 <div className="space-y-1.5">
                   {ticket.relatedTickets.map(rid => (
                     <a key={rid} href={`/tickets/${rid}`} className="flex items-center gap-2 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
@@ -245,23 +262,23 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
 
             {/* Metadata */}
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Détails</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("details")}</p>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Catégorie</span>
-                  <span className="text-[10px] text-gray-600">{ticket.category}</span>
+                  <span className="text-[10px] text-gray-400">{t("category")}</span>
+                  <span className="text-[10px] text-gray-600">{ticket.category[locale]}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Créé</span>
-                  <span className="text-[10px] text-gray-600">{formatRelativeTime(ticket.createdAt)}</span>
+                  <span className="text-[10px] text-gray-400">{t("created")}</span>
+                  <span className="text-[10px] text-gray-600">{formatRelativeTime(ticket.createdAt, tTime)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gray-400">Mis à jour</span>
-                  <span className="text-[10px] text-gray-600">{formatRelativeTime(ticket.updatedAt)}</span>
+                  <span className="text-[10px] text-gray-400">{t("updated")}</span>
+                  <span className="text-[10px] text-gray-600">{formatRelativeTime(ticket.updatedAt, tTime)}</span>
                 </div>
                 {ticket.assignedAgent && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-gray-400">Assigné à</span>
+                    <span className="text-[10px] text-gray-400">{t("assignedTo")}</span>
                     <span className="text-[10px] text-gray-600">{ticket.assignedAgent.name.split(" ")[0]}</span>
                   </div>
                 )}
@@ -270,11 +287,11 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
 
             {/* Tags */}
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Tags</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("tags")}</p>
               <div className="flex flex-wrap gap-1">
                 {ticket.tags.map(tag => (
-                  <span key={tag} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded border border-gray-200">
-                    {tag}
+                  <span key={tag.fr} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded border border-gray-200">
+                    {tag[locale]}
                   </span>
                 ))}
                 <button className="text-[10px] text-gray-400 hover:text-gray-600 px-1 py-0.5 rounded border border-dashed border-gray-300 transition-colors">
@@ -313,14 +330,14 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                       ? "bg-[#017764]/10 text-[#017764] rounded-tr-sm border border-[#017764]/20"
                       : "bg-[#017764] text-white rounded-tr-sm shadow-sm"
                   )}>
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                    <p className="whitespace-pre-wrap">{msg.content[locale]}</p>
                   </div>
                   <div className={cn("flex items-center gap-2 px-1", msg.sender !== "contact" ? "flex-row-reverse" : "")}>
-                    <span className="text-[10px] text-gray-400">{formatRelativeTime(msg.timestamp)}</span>
+                    <span className="text-[10px] text-gray-400">{formatRelativeTime(msg.timestamp, tTime)}</span>
                     {msg.sentiment && msg.sender === "contact" && (
                       <span className="text-[10px] text-gray-400">{sentimentConfig[msg.sentiment]?.emoji}</span>
                     )}
-                    {msg.sender === "ai" && <span className="text-[10px] text-[#017764]/50">IA · RAG</span>}
+                    {msg.sender === "ai" && <span className="text-[10px] text-[#017764]/50">{t("ragTag")}</span>}
                   </div>
                 </div>
               </div>
@@ -347,7 +364,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
               <textarea
                 value={message}
                 onChange={e => setMessage(e.target.value)}
-                placeholder={`Répondre à ${ticket.contact.name}...`}
+                placeholder={t("replyPlaceholder", { name: ticket.contact.name })}
                 rows={3}
                 className="w-full p-3 bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none resize-none"
               />
@@ -355,11 +372,11 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                 <button className="p-1.5 rounded text-gray-400 hover:text-gray-600 transition-colors"><Paperclip className="w-4 h-4" /></button>
                 <button className="p-1.5 rounded text-gray-400 hover:text-gray-600 transition-colors"><Smile className="w-4 h-4" /></button>
                 <button className="flex items-center gap-1 p-1.5 rounded text-gray-400 hover:text-gray-600 transition-colors text-xs">
-                  <LayoutTemplate className="w-4 h-4" /> Template
+                  <LayoutTemplate className="w-4 h-4" /> {t("template")}
                 </button>
                 <div className="flex-1" />
                 <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#017764] hover:bg-[#015a4d] text-white text-xs font-semibold rounded-lg transition-colors shadow-md shadow-[#017764]/20">
-                  <Send className="w-3.5 h-3.5" /> Envoyer
+                  <Send className="w-3.5 h-3.5" /> {t("send")}
                 </button>
               </div>
             </div>
@@ -371,9 +388,9 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
           {/* Tabs */}
           <div className="flex border-b border-gray-200">
             {([
-              { id: "ai", icon: Bot, label: "IA" },
-              { id: "kb", icon: BookOpen, label: "Sources" },
-              { id: "collab", icon: Users, label: "Collab" },
+              { id: "ai", icon: Bot, label: t("tabAi") },
+              { id: "kb", icon: BookOpen, label: t("tabKb") },
+              { id: "collab", icon: Users, label: t("tabCollab") },
             ] as const).map(tab => (
               <button
                 key={tab.id}
@@ -399,7 +416,7 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-1.5">
                       <Cpu className="w-3.5 h-3.5 text-[#017764]" />
-                      <span className="text-[11px] font-semibold text-[#017764]">Confiance IA</span>
+                      <span className="text-[11px] font-semibold text-[#017764]">{t("aiConfidence")}</span>
                     </div>
                     <span className={cn("text-sm font-bold",
                       ticket.aiConfidence >= 0.85 ? "text-[#017764]" :
@@ -418,8 +435,8 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                     />
                   </div>
                   <p className="text-[10px] text-gray-400 mt-1.5">
-                    {ticket.aiConfidence >= 0.85 ? "Résolution autonome recommandée" :
-                     ticket.aiConfidence >= 0.6 ? "Revue humaine suggérée" : "Expertise humaine requise"}
+                    {ticket.aiConfidence >= 0.85 ? t("aiRecommendAuto") :
+                     ticket.aiConfidence >= 0.6 ? t("aiRecommendReview") : t("aiRecommendExpert")}
                   </p>
                 </div>
 
@@ -428,10 +445,10 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-semibold text-gray-700 flex items-center gap-1.5">
-                        <Bot className="w-3.5 h-3.5 text-[#017764]" /> Brouillon IA
+                        <Bot className="w-3.5 h-3.5 text-[#017764]" /> {t("aiDraft")}
                       </span>
                       <button onClick={() => setDraftEditing(!draftEditing)} className="text-[10px] text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1">
-                        <Edit3 className="w-3 h-3" /> {draftEditing ? "Annuler" : "Éditer"}
+                        <Edit3 className="w-3 h-3" /> {draftEditing ? t("cancel") : t("edit")}
                       </button>
                     </div>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
@@ -450,19 +467,19 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                           onClick={() => setMessage(draft)}
                           className="flex-1 text-[10px] py-1.5 bg-[#017764]/10 text-[#017764] rounded-lg hover:bg-[#017764]/20 transition-colors flex items-center justify-center gap-1"
                         >
-                          <Copy className="w-3 h-3" /> Utiliser
+                          <Copy className="w-3 h-3" /> {t("use")}
                         </button>
                         <button className="flex items-center gap-1 text-[10px] py-1.5 px-2 bg-[#017764] text-white rounded-lg hover:bg-[#015a4d] transition-colors">
-                          <Send className="w-3 h-3" /> Envoyer
+                          <Send className="w-3 h-3" /> {t("send")}
                         </button>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       <button className="flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] text-gray-500 hover:text-[#017764] bg-gray-50 rounded-lg hover:bg-[#017764]/8 transition-all border border-gray-200">
-                        <ThumbsUp className="w-3 h-3" /> Utile
+                        <ThumbsUp className="w-3 h-3" /> {t("helpful")}
                       </button>
                       <button className="flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] text-gray-500 hover:text-red-500 bg-gray-50 rounded-lg hover:bg-red-50 transition-all border border-gray-200">
-                        <ThumbsDown className="w-3 h-3" /> Régénérer
+                        <ThumbsDown className="w-3 h-3" /> {t("regenerate")}
                       </button>
                     </div>
                   </div>
@@ -471,9 +488,9 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                 {!draft && (
                   <div className="text-center py-4">
                     <Bot className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                    <p className="text-[11px] text-gray-400 mb-3">Aucun brouillon IA disponible</p>
+                    <p className="text-[11px] text-gray-400 mb-3">{t("noDraft")}</p>
                     <button className="flex items-center gap-1.5 px-3 py-2 bg-[#017764]/10 text-[#017764] text-[11px] rounded-lg hover:bg-[#017764]/20 transition-colors mx-auto">
-                      <RefreshCw className="w-3.5 h-3.5" /> Générer une suggestion
+                      <RefreshCw className="w-3.5 h-3.5" /> {t("generateSuggestion")}
                     </button>
                   </div>
                 )}
@@ -483,14 +500,10 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
             {activeTab === "kb" && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-gray-700">Sources RAG</span>
-                  <span className="text-[10px] text-gray-400">3 articles pertinents</span>
+                  <span className="text-[11px] font-semibold text-gray-700">{t("ragSources")}</span>
+                  <span className="text-[10px] text-gray-400">{t("relevantArticles", { count: kbArticles.length })}</span>
                 </div>
-                {[
-                  { id: "kb1", title: "Résolution VPN Cisco AnyConnect", relevance: 0.94, category: "Réseau" },
-                  { id: "kb5", title: "Problèmes d'authentification VPN", relevance: 0.78, category: "Réseau" },
-                  { id: "kb3", title: "Configuration SSO et certificats", relevance: 0.61, category: "Sécurité" },
-                ].map(article => (
+                {kbArticles.map(article => (
                   <div key={article.id} className="p-3 bg-gray-50 border border-gray-200 rounded-xl hover:border-[#017764]/25 transition-colors">
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <p className="text-[11px] font-medium text-gray-700 leading-snug">{article.title}</p>
@@ -500,10 +513,10 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                         {Math.round(article.relevance * 100)}%
                       </span>
                     </div>
-                    <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">{article.category}</span>
+                    <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">{tCommon(`categories.${article.category}`)}</span>
                     <div className="flex gap-2 mt-2">
-                      <button className="flex-1 text-[10px] py-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition-colors">Voir</button>
-                      <button className="flex-1 text-[10px] py-1 bg-[#017764]/10 text-[#017764] rounded hover:bg-[#017764]/20 transition-colors">Insérer</button>
+                      <button className="flex-1 text-[10px] py-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition-colors">{t("view")}</button>
+                      <button className="flex-1 text-[10px] py-1 bg-[#017764]/10 text-[#017764] rounded hover:bg-[#017764]/20 transition-colors">{t("insert")}</button>
                     </div>
                   </div>
                 ))}
@@ -513,12 +526,9 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
             {activeTab === "collab" && (
               <div className="space-y-4">
                 <div>
-                  <p className="text-[11px] font-semibold text-gray-700 mb-3">Impliquer un expert</p>
+                  <p className="text-[11px] font-semibold text-gray-700 mb-3">{t("involveExpert")}</p>
                   <div className="space-y-2">
-                    {[
-                      { name: "Théo Moreau", team: "DevOps", status: "online" },
-                      { name: "Emma Dubois", team: "Sécurité", status: "busy" },
-                    ].map(expert => (
+                    {experts.map(expert => (
                       <div key={expert.name} className="flex items-center gap-2 p-2.5 bg-gray-50 border border-gray-200 rounded-xl">
                         <div className="relative">
                           <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">
@@ -539,14 +549,14 @@ export default function TicketDetail({ params }: { params: Promise<{ id: string 
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-semibold text-gray-700 mb-2">Note interne</p>
+                  <p className="text-[11px] font-semibold text-gray-700 mb-2">{t("internalNote")}</p>
                   <textarea
                     rows={3}
-                    placeholder="Note visible uniquement par l'équipe..."
+                    placeholder={t("internalNotePlaceholder")}
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[11px] text-gray-700 placeholder-gray-400 outline-none resize-none focus:border-[#017764]/50 transition-colors"
                   />
                   <button className="mt-2 w-full text-[11px] py-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200">
-                    Ajouter la note
+                    {t("addNote")}
                   </button>
                 </div>
               </div>

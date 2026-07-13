@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import Sidebar from "@/components/layout/Sidebar";
 
@@ -18,20 +20,25 @@ export const metadata: Metadata = {
   description: "Plateforme helpdesk AI-First avec RAG, workflows no-code et analytics prédictif",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="antialiased bg-slate-950 text-slate-100 h-full">
-        <div className="flex h-full">
-          <Sidebar />
-          <main className="flex-1 ml-64 overflow-auto min-h-screen">
-            {children}
-          </main>
-        </div>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="flex h-full">
+            <Sidebar />
+            <main className="flex-1 ml-64 overflow-auto min-h-screen">
+              {children}
+            </main>
+          </div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
