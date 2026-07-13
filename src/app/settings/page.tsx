@@ -81,7 +81,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopBar title="Paramètres" subtitle="Configuration de la plateforme NEXUS DESK" />
+      <TopBar title="Paramètres" subtitle="Configuration de la plateforme AFCAC Helpdesk Portal" />
 
       <div className="flex h-[calc(100vh-56px)]">
         {/* Sidebar */}
@@ -111,7 +111,7 @@ export default function SettingsPage() {
             <div className="max-w-2xl space-y-6">
               <div>
                 <h2 className="text-base font-semibold text-gray-900 mb-1">Intelligence Artificielle</h2>
-                <p className="text-xs text-gray-400">Configurez le comportement du moteur IA RAG de NEXUS DESK</p>
+                <p className="text-xs text-gray-400">Configurez le comportement du moteur IA RAG de AFCAC Helpdesk Portal</p>
               </div>
 
               {/* Model Selection */}
@@ -236,7 +236,7 @@ export default function SettingsPage() {
             <div className="max-w-2xl space-y-6">
               <div>
                 <h2 className="text-base font-semibold text-gray-900 mb-1">Intégrations</h2>
-                <p className="text-xs text-gray-400">Connectez NEXUS DESK à votre écosystème d&apos;outils</p>
+                <p className="text-xs text-gray-400">Connectez AFCAC Helpdesk Portal à votre écosystème d&apos;outils</p>
               </div>
               <div className="space-y-3">
                 {integrations.map(integration => (

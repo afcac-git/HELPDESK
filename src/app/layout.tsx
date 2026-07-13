@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NEXUS DESK — Helpdesk IA Nouvelle Génération",
+  title: "AFCAC Helpdesk Portal",
   description: "Plateforme helpdesk AI-First avec RAG, workflows no-code et analytics prédictif",
 };
 

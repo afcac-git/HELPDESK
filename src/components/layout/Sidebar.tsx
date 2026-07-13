@@ -45,8 +45,8 @@ export default function Sidebar() {
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="text-gray-900 font-bold text-base tracking-tight">NEXUS</span>
-            <span className="text-[#017764] font-bold text-base tracking-tight"> DESK</span>
+            <span className="text-gray-900 font-bold text-base tracking-tight">AFCAC</span>
+            <span className="text-[#017764] font-bold text-base tracking-tight"> Helpdesk Portal</span>
           </div>
         </div>
       </div>
