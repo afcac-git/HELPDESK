@@ -78,7 +78,8 @@
     "onlineCount": "{count} online",
     "ticketsCount": "{count} tickets",
     "currentUser": "Admin User",
-    "currentUserRole": "Super Admin"
+    "currentUserRole": "Super Admin",
+    "logout": "Sair"
   },
   "dashboard": {
     "title": "Command Center",

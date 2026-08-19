@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   LayoutDashboard,
   Ticket,
@@ -13,6 +14,7 @@ import {
   Settings,
   Search,
   ChevronDown,
+  LogOut,
   Wifi,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,6 +40,7 @@ const statusColor: Record<string, string> = {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const t = useTranslations("sidebar");
 
   return (
@@ -123,19 +126,39 @@ export default function Sidebar() {
 
       {/* Current user */}
       <div className="px-3 py-3 border-t border-gray-200">
-        <div className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-          <div className="relative">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#017764] to-[#b0aa34] flex items-center justify-center text-xs font-bold text-white">
-              AD
-            </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-gray-800">{t("currentUser")}</p>
-            <p className="text-[10px] text-gray-400">{t("currentUserRole")}</p>
-          </div>
-          <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
-        </div>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+              <div className="relative">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#017764] to-[#b0aa34] flex items-center justify-center text-xs font-bold text-white">
+                  AD
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white" />
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-xs font-medium text-gray-800">{t("currentUser")}</p>
+                <p className="text-[10px] text-gray-400">{t("currentUserRole")}</p>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              side="top"
+              align="end"
+              sideOffset={6}
+              className="min-w-[180px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50"
+            >
+              <DropdownMenu.Item
+                onSelect={() => router.push("/")}
+                className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 hover:text-red-600 cursor-pointer outline-none transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                {t("logout")}
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </div>
     </aside>
   );
