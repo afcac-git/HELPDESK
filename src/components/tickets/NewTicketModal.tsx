@@ -32,6 +32,7 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
   const [category, setCategory] = useState<CategorySlug>("network");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const resetForm = () => {
     setTitle("");
@@ -41,11 +42,12 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
     setCategory("network");
     setName("");
     setEmail("");
+    setPhone("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim() || !name.trim() || !email.trim()) return;
+    if (!title.trim() || !description.trim() || !name.trim() || !email.trim() || !phone.trim()) return;
 
     const now = new Date();
     const id = `TK-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -60,6 +62,7 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
         id: `c-${id}`,
         name,
         email,
+        phone,
         company: "—",
         tier: "Starter",
         healthScore: 70,
@@ -158,6 +161,10 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
                 <label className="text-[11px] text-gray-500 mb-1 block">{t("yourEmail")}</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputClass} />
               </div>
+            </div>
+            <div>
+              <label className="text-[11px] text-gray-500 mb-1 block">{t("yourPhone")}</label>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className={inputClass} />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Dialog.Close asChild>

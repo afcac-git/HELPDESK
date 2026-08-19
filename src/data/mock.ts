@@ -24,6 +24,7 @@ export interface Contact {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   company: string;
   tier: "VIP" | "Enterprise" | "SMB" | "Starter";
   healthScore: number;
