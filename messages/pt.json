@@ -517,6 +517,31 @@
       }
     }
   },
+  "home": {
+    "title": "Bem-vindo ao portal de suporte da AFCAC",
+    "subtitle": "Como podemos ajudá-lo hoje?",
+    "ticketCard": {
+      "title": "Enviar um pedido",
+      "description": "Abra um ticket de suporte e nossa equipe (ou nossa IA) responderá rapidamente.",
+      "cta": "Abrir o formulário"
+    },
+    "staffCard": {
+      "title": "Área da Equipe CAFAC",
+      "description": "Acesse o portal interno para gerenciar tickets, workflows e analytics.",
+      "cta": "Entrar"
+    },
+    "footer": "© {year} AFCAC — Comissão Africana da Aviação Civil"
+  },
+  "login": {
+    "title": "Login da Equipe",
+    "subtitle": "Reservado para o pessoal da AFCAC",
+    "email": "Email profissional",
+    "emailPlaceholder": "nome.sobrenome@afcac.org",
+    "password": "Senha",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Entrar",
+    "backHome": "Voltar à página inicial"
+  },
   "time": {
     "justNow": "Agora mesmo",
     "minutesAgo": "Há {count}m",

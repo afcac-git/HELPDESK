@@ -18,7 +18,7 @@ const slaByPriority: Record<Priority, number> = { P1: 60, P2: 180, P3: 480, P4: 
 const inputClass = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 outline-none focus:border-[#017764]/50 transition-colors";
 const selectClass = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 outline-none focus:border-[#017764]/50 transition-colors";
 
-export default function NewTicketModal() {
+export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode }) {
   const t = useTranslations("newTicket");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
@@ -94,10 +94,12 @@ export default function NewTicketModal() {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#017764] hover:bg-[#015a4d] text-white text-xs font-semibold rounded-lg transition-colors shadow-lg shadow-[#017764]/20">
-          <Plus className="w-3.5 h-3.5" />
-          {t("trigger")}
-        </button>
+        {trigger ?? (
+          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#017764] hover:bg-[#015a4d] text-white text-xs font-semibold rounded-lg transition-colors shadow-lg shadow-[#017764]/20">
+            <Plus className="w-3.5 h-3.5" />
+            {t("trigger")}
+          </button>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />

@@ -3,8 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
-import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   Ticket,
@@ -19,11 +18,10 @@ import {
 import { cn } from "@/lib/utils";
 import { agents } from "@/data/mock";
 import afcacLogo from "@/images/afcac_logo.png";
-import { setLocale } from "@/i18n/actions";
-import { locales, localeLabels, type Locale } from "@/i18n/config";
+import LocaleSwitcher from "@/components/layout/LocaleSwitcher";
 
 const navItems = [
-  { href: "/", icon: LayoutDashboard, key: "dashboard" },
+  { href: "/dashboard", icon: LayoutDashboard, key: "dashboard" },
   { href: "/tickets", icon: Ticket, key: "tickets" },
   { href: "/workflow", icon: GitBranch, key: "workflows" },
   { href: "/analytics", icon: BarChart3, key: "analytics" },
@@ -41,14 +39,6 @@ const statusColor: Record<string, string> = {
 export default function Sidebar() {
   const pathname = usePathname();
   const t = useTranslations("sidebar");
-  const locale = useLocale() as Locale;
-  const [isPending, startTransition] = useTransition();
-
-  const handleLocaleChange = (next: Locale) => {
-    startTransition(() => {
-      setLocale(next);
-    });
-  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0 z-40">
@@ -66,22 +56,7 @@ export default function Sidebar() {
 
       {/* Language switcher */}
       <div className="px-5 pt-3">
-        <div className="flex items-center gap-0.5 p-0.5 bg-gray-100 rounded-lg">
-          {locales.map((l) => (
-            <button
-              key={l}
-              onClick={() => handleLocaleChange(l)}
-              disabled={isPending}
-              title={localeLabels[l]}
-              className={cn(
-                "flex-1 text-[10px] font-semibold uppercase py-1 rounded-md transition-colors",
-                locale === l ? "bg-white text-[#017764] shadow-sm" : "text-gray-400 hover:text-gray-600"
-              )}
-            >
-              {l}
-            </button>
-          ))}
-        </div>
+        <LocaleSwitcher />
       </div>
 
       {/* Search */}

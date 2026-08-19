@@ -517,6 +517,31 @@
       }
     }
   },
+  "home": {
+    "title": "Welcome to the AFCAC support portal",
+    "subtitle": "How can we help you today?",
+    "ticketCard": {
+      "title": "Submit a request",
+      "description": "Open a support ticket and our team (or our AI) will get back to you quickly.",
+      "cta": "Open the form"
+    },
+    "staffCard": {
+      "title": "CAFAC Staff Area",
+      "description": "Access the internal portal to manage tickets, workflows and analytics.",
+      "cta": "Sign in"
+    },
+    "footer": "© {year} AFCAC — African Civil Aviation Commission"
+  },
+  "login": {
+    "title": "Staff Login",
+    "subtitle": "Reserved for AFCAC personnel",
+    "email": "Work email",
+    "emailPlaceholder": "first.last@afcac.org",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Sign in",
+    "backHome": "Back to home"
+  },
   "time": {
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",

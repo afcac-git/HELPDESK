@@ -517,6 +517,31 @@
       }
     }
   },
+  "home": {
+    "title": "Bienvenue sur le portail d'assistance AFCAC",
+    "subtitle": "Comment pouvons-nous vous aider aujourd'hui ?",
+    "ticketCard": {
+      "title": "Soumettre une demande",
+      "description": "Ouvrez un ticket de support et notre équipe (ou notre IA) vous répondra rapidement.",
+      "cta": "Ouvrir le formulaire"
+    },
+    "staffCard": {
+      "title": "Espace Staff CAFAC",
+      "description": "Accédez au portail interne pour gérer les tickets, workflows et analytics.",
+      "cta": "Se connecter"
+    },
+    "footer": "© {year} AFCAC — Commission Africaine de l'Aviation Civile"
+  },
+  "login": {
+    "title": "Connexion Staff",
+    "subtitle": "Réservé au personnel de l'AFCAC",
+    "email": "Email professionnel",
+    "emailPlaceholder": "prenom.nom@afcac.org",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Se connecter",
+    "backHome": "Retour à l'accueil"
+  },
   "time": {
     "justNow": "À l'instant",
     "minutesAgo": "Il y a {count}m",
