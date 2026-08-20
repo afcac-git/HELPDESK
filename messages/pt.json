@@ -63,7 +63,9 @@
     "yourEmail": "Seu email",
     "yourPhone": "Seu número de telefone",
     "cancel": "Cancelar",
-    "submit": "Enviar solicitação"
+    "submit": "Enviar solicitação",
+    "submitting": "Enviando...",
+    "error": "Ocorreu um erro, tente novamente."
   },
   "sidebar": {
     "nav": {

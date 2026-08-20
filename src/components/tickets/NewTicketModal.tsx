@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Plus, X } from "lucide-react";
 import { useTickets } from "@/context/TicketsContext";
-import { categoryLabels } from "@/i18n/categoryLabels";
 import type { Priority, Channel, CategorySlug } from "@/data/mock";
-import type { Locale } from "@/i18n/config";
 
 const priorityOptions: Priority[] = ["P1", "P2", "P3", "P4"];
 const channelOptions: Channel[] = ["email", "slack", "whatsapp", "teams", "web", "phone"];
 const categoryOptions: CategorySlug[] = ["network", "auth", "api", "security", "admin", "app"];
-
-const slaByPriority: Record<Priority, number> = { P1: 60, P2: 180, P3: 480, P4: 1440 };
 
 const inputClass = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 outline-none focus:border-[#017764]/50 transition-colors";
 const selectClass = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 outline-none focus:border-[#017764]/50 transition-colors";
@@ -21,8 +17,7 @@ const selectClass = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-
 export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode }) {
   const t = useTranslations("newTicket");
   const tCommon = useTranslations("common");
-  const locale = useLocale() as Locale;
-  const { addTicket } = useTickets();
+  const { createTicket } = useTickets();
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -33,6 +28,8 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(false);
 
   const resetForm = () => {
     setTitle("");
@@ -45,53 +42,21 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
     setPhone("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || !name.trim() || !email.trim() || !phone.trim()) return;
 
-    const now = new Date();
-    const id = `TK-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    addTicket({
-      id,
-      title: { fr: title, en: title, pt: title },
-      priority,
-      status: "open",
-      channel,
-      contact: {
-        id: `c-${id}`,
-        name,
-        email,
-        phone,
-        company: "—",
-        tier: "Starter",
-        healthScore: 70,
-        totalTickets: 1,
-        csat: 0,
-        language: locale,
-      },
-      createdAt: now,
-      updatedAt: now,
-      slaMinutesLeft: slaByPriority[priority],
-      tags: [],
-      sentiment: "neutral",
-      sentimentScore: 0.5,
-      aiConfidence: 0,
-      relatedTickets: [],
-      category: categoryLabels[category],
-      messages: [
-        {
-          id: `m-${id}`,
-          sender: "contact",
-          timestamp: now,
-          channel,
-          content: { fr: description, en: description, pt: description },
-        },
-      ],
-    });
-
-    resetForm();
-    setOpen(false);
+    setSubmitting(true);
+    setError(false);
+    try {
+      await createTicket({ title, description, priority, channel, category, name, email, phone });
+      resetForm();
+      setOpen(false);
+    } catch {
+      setError(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -166,14 +131,21 @@ export default function NewTicketModal({ trigger }: { trigger?: React.ReactNode 
               <label className="text-[11px] text-gray-500 mb-1 block">{t("yourPhone")}</label>
               <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className={inputClass} />
             </div>
+            {error && (
+              <p className="text-xs text-red-600">{t("error")}</p>
+            )}
             <div className="flex justify-end gap-2 pt-2">
               <Dialog.Close asChild>
                 <button type="button" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-medium rounded-lg transition-colors">
                   {t("cancel")}
                 </button>
               </Dialog.Close>
-              <button type="submit" className="flex items-center gap-1.5 px-4 py-2 bg-[#017764] hover:bg-[#015a4d] text-white text-xs font-semibold rounded-lg transition-colors">
-                {t("submit")}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#017764] hover:bg-[#015a4d] disabled:opacity-60 text-white text-xs font-semibold rounded-lg transition-colors"
+              >
+                {submitting ? t("submitting") : t("submit")}
               </button>
             </div>
           </form>
