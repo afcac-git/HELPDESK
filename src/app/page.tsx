@@ -33,13 +33,13 @@ export default function Home() {
         <div className="grid sm:grid-cols-2 gap-6 w-full max-w-3xl">
           <NewTicketModal
             trigger={
-              <button className="group flex flex-col items-start text-left p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-[#017764]/40 transition-all">
-                <div className="w-12 h-12 rounded-xl bg-[#017764]/10 flex items-center justify-center mb-4 group-hover:bg-[#017764]/15 transition-colors">
-                  <TicketPlus className="w-6 h-6 text-[#017764]" />
+              <button className="group flex flex-col items-start text-left p-6 bg-[#017764] border border-[#017764] rounded-2xl shadow-sm hover:shadow-lg hover:bg-[#015a4d] transition-all">
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors">
+                  <TicketPlus className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-base font-semibold text-gray-900 mb-1">{t("ticketCard.title")}</h2>
-                <p className="text-xs text-gray-500 mb-4">{t("ticketCard.description")}</p>
-                <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-[#017764]">
+                <h2 className="text-base font-semibold text-white mb-1">{t("ticketCard.title")}</h2>
+                <p className="text-xs text-white/80 mb-4">{t("ticketCard.description")}</p>
+                <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-white">
                   {t("ticketCard.cta")}
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </span>
@@ -49,14 +49,14 @@ export default function Home() {
 
           <Link
             href="/login"
-            className="group flex flex-col items-start text-left p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-[#b0aa34]/50 transition-all"
+            className="group flex flex-col items-start text-left p-6 bg-[#017764] border border-[#017764] rounded-2xl shadow-sm hover:shadow-lg hover:bg-[#015a4d] transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-[#b0aa34]/15 flex items-center justify-center mb-4 group-hover:bg-[#b0aa34]/25 transition-colors">
-              <ShieldCheck className="w-6 h-6 text-[#8a852a]" />
+            <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors">
+              <ShieldCheck className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">{t("staffCard.title")}</h2>
-            <p className="text-xs text-gray-500 mb-4">{t("staffCard.description")}</p>
-            <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-[#8a852a]">
+            <h2 className="text-base font-semibold text-white mb-1">{t("staffCard.title")}</h2>
+            <p className="text-xs text-white/80 mb-4">{t("staffCard.description")}</p>
+            <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-white">
               {t("staffCard.cta")}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </span>
