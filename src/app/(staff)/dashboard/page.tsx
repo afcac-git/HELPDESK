@@ -119,6 +119,7 @@ export default function Dashboard() {
   const { tickets } = useTickets();
 
   const volumeForecastLocalized = volumeForecast.map(d => ({ ...d, dayLabel: tCommon(`days.${d.day}`) }));
+  const openTicketsCount = tickets.filter(tk => tk.status === "open").length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -139,7 +140,7 @@ export default function Dashboard() {
 
         {/* KPI Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <StatCard icon={TicketCheck} label={t("kpi.openTickets")} value={dashboardStats.openTickets} delta={-8} deltaLabel={t("kpi.vsYesterday")} color="primary" />
+          <StatCard icon={TicketCheck} label={t("kpi.openTickets")} value={openTicketsCount} delta={-8} deltaLabel={t("kpi.vsYesterday")} color="primary" />
           <StatCard icon={Bot} label={t("kpi.aiResolved")} value={dashboardStats.aiResolvedAuto} delta={12} deltaLabel={t("kpi.autoToday")} color="emerald" />
           <StatCard icon={Clock} label={t("kpi.responseTime")} value={dashboardStats.avgResponseTime} color="blue" />
           <StatCard icon={Star} label={t("kpi.avgCsat")} value={dashboardStats.csat} delta={3} deltaLabel={t("kpi.outOf5")} color="accent" />

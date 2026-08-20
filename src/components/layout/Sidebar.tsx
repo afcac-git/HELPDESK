@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { agents } from "@/data/mock";
 import afcacLogo from "@/images/afcac_logo.png";
 import LocaleSwitcher from "@/components/layout/LocaleSwitcher";
+import { useTickets } from "@/context/TicketsContext";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard" },
@@ -42,6 +43,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("sidebar");
+  const { tickets } = useTickets();
+  const openTicketsCount = tickets.filter((tk) => tk.status === "open").length;
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0 z-40">
@@ -90,7 +93,7 @@ export default function Sidebar() {
               {t(`nav.${key}`)}
               {href === "/tickets" && (
                 <span className="ml-auto bg-[#017764] text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                  127
+                  {openTicketsCount}
                 </span>
               )}
             </Link>
