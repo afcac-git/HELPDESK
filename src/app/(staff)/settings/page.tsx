@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TeamAgentsSection from "@/components/settings/TeamAgentsSection";
 
 const settingsSections = [
   { id: "ai", icon: Bot, key: "ai" },
@@ -242,6 +243,8 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+
+          {activeSection === "team" && <TeamAgentsSection />}
 
           {activeSection === "integrations" && (
             <div className="max-w-2xl space-y-6">
