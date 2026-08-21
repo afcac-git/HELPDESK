@@ -21,6 +21,18 @@ interface TicketsContextValue {
 
 const TicketsContext = createContext<TicketsContextValue | null>(null);
 
+// fetch()'s res.json() leaves Date fields as ISO strings (Response.json()
+// on the server serializes them); revive them so formatRelativeTime()'s
+// date.getTime() calls don't blow up on a string.
+function reviveTicket(raw: Ticket): Ticket {
+  return {
+    ...raw,
+    createdAt: new Date(raw.createdAt),
+    updatedAt: new Date(raw.updatedAt),
+    messages: raw.messages.map((m) => ({ ...m, timestamp: new Date(m.timestamp) })),
+  };
+}
+
 export function TicketsProvider({ children }: { children: ReactNode }) {
   const [tickets, setTickets] = useState<Ticket[]>(mockTickets);
 
@@ -28,7 +40,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     fetch("/api/tickets")
       .then((res) => (res.ok ? res.json() : []))
       .then((persisted: Ticket[]) => {
-        setTickets([...persisted, ...mockTickets]);
+        setTickets([...persisted.map(reviveTicket), ...mockTickets]);
       })
       .catch(() => {
         // Keep the demo data if the database is unreachable.
@@ -44,7 +56,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     if (!res.ok) {
       throw new Error("Failed to create ticket");
     }
-    const ticket: Ticket = await res.json();
+    const ticket: Ticket = reviveTicket(await res.json());
     setTickets((prev) => [ticket, ...prev]);
   };
 
